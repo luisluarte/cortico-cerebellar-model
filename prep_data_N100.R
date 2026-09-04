@@ -1,0 +1,10 @@
+library(dplyr)
+library(jsonlite)
+df <- read.csv('data/behavioral_compilate.csv')
+df <- df %>% group_by(participant_id) %>% mutate(rt = (ttr - ttp) / 1000, iti = (ttp - lag(ttF)) / 1000) %>% ungroup()
+selected_participants <- unique(df$participant_id)[1:100]
+df_sub <- df %>% filter(participant_id %in% selected_participants)
+df_sub <- df_sub %>% mutate(iti = ifelse(is.na(iti) | iti < 0, median(iti, na.rm = TRUE), iti)) %>% filter(Resp %in% c(1, 2) & rt > 0.1)
+stan_data <- list(N = nrow(df_sub), N_subj = length(unique(df_sub$participant_id)), subj = as.numeric(as.factor(df_sub$participant_id)), Bd1 = df_sub$Bd1, Bd2 = df_sub$Bd2, Resp = df_sub$Resp, Reward = df_sub$F, RT = df_sub$rt, ITI = df_sub$iti)
+write_json(stan_data, 'data/stan_data_N100.json', auto_unbox = TRUE)
+cat('N100 Data Ready\n')

@@ -1,0 +1,6 @@
+library(cmdstanr)
+library(loo)
+fit <- readRDS('m2_fit.rds')
+log_lik <- fit$draws('log_lik')
+loo_res <- loo(log_lik)
+cat(sprintf('Model Codename: M2_Softplus_Compression\nELPD: %.2f (SE: %.2f)\n', loo_res$estimates['elpd_loo', 'Estimate'], loo_res$estimates['elpd_loo', 'SE']))

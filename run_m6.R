@@ -1,0 +1,7 @@
+library(cmdstanr)
+library(jsonlite)
+mod <- cmdstan_model('m6_saturated_immersion.stan')
+data <- read_json('data/stan_data_N30.json', simplifyVector = TRUE)
+data$min_RT <- min(data$RT)
+fit <- mod$pathfinder(data = data, num_paths = 4, single_path_draws = 1000)
+fit$save_object('m6_fit.rds')
