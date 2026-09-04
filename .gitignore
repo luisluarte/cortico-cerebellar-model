@@ -1,0 +1,57 @@
+# Ignore R objects and fits
+*.rds
+*.RData
+
+# Ignore logs
+*.log
+
+# Ignore compiled Stan executables (no extension on Linux for cmdstan, but they usually don't have .stan)
+# It's tricky to ignore compiled binaries without extension.
+# Since the stan files are named like m1_base_topology.stan, the binary is m1_base_topology.
+# I will use a pattern for the ones I see:
+d1_*
+!d1_*.stan
+d2_*
+!d2_*.stan
+d3_*
+!d3_*.stan
+d4_*
+!d4_*.stan
+d5_*
+!d5_*.stan
+d6_*
+!d6_*.stan
+d7_*
+!d7_*.stan
+d8_*
+!d8_*.stan
+d9_*
+!d9_*.stan
+d10_*
+!d10_*.stan
+d11_*
+!d11_*.stan
+d12_*
+!d12_*.stan
+d13_*
+!d13_*.stan
+m1_*
+!m1_*.stan
+m2_*
+!m2_*.stan
+m3_*
+!m3_*.stan
+m4_*
+!m4_*.stan
+m5_*
+!m5_*.stan
+m6_*
+!m6_*.stan
+h_topo6_*
+!h_topo6_*.stan
+
+# Wait, the R scripts start with run_m1 etc.
+!run_*.R
+!eval_*.R
+!m*_*.R
+!d*_*.R
