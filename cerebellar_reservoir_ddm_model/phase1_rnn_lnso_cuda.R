@@ -34,7 +34,8 @@ cat("Isolated 50 subjects and saved to rnn_phase1_subjects.rds\n")
 Ch <- numeric(N_trials)
 for(i in 1:N_trials) Ch[i] <- ifelse(stan_data$Resp[i] == 1, stan_data$Bd1[i], stan_data$Bd2[i])
 
-Switch <- numeric(N_trials); lag_Reward <- numeric(N_trials); lag_Ch <- numeric(N_trials); lag_RT <- numeric(N_trials); lag_Resp <- numeric(N_trials)
+Switch <- numeric(N_trials); lag_Reward <- numeric(N_trials); lag_Ch <- numeric(N_trials)
+lag_RT <- numeric(N_trials); lag_Resp <- numeric(N_trials)
 current_subj <- -1
 for(i in 1:N_trials) {
   if (stan_data$subj[i] != current_subj) {
