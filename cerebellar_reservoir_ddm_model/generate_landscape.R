@@ -118,8 +118,8 @@ p_beta_gran <- 0.5
 p_sigma2_diff <- 0.1
 
 # Grid setup
-grid_res <- 25
-alpha_pc_seq <- seq(0.001, 0.2, length.out = grid_res)
+grid_res <- 100
+alpha_pc_seq <- seq(0.0001, 0.002, length.out = grid_res)
 kappa_cf_seq <- seq(0.0001, 0.05, length.out = grid_res)
 p_lambda_pc <- 0.2 # fixed leak
 
