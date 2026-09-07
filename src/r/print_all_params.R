@@ -1,0 +1,24 @@
+
+extract_quartiles <- function(res_file, param_names) {
+  res <- readRDS(res_file)
+  df <- as.data.frame(res$par[res$pareto.optimal, , drop=FALSE])
+  colnames(df) <- param_names
+  df <- df[order(df$gamma), ]
+  n <- nrow(df)
+  q1 <- df[max(1, floor(n * 0.25)), ]
+  q2 <- df[max(1, floor(n * 0.50)), ]
+  q3 <- df[max(1, floor(n * 0.75)), ]
+  
+  out <- rbind(q1, q2, q3)
+  rownames(out) <- c("Q1 (25th)", "Q2 (Median)", "Q3 (75th)")
+  return(out)
+}
+
+cat("=== WSLS ===\n")
+print(extract_quartiles("fast_res_wsls.rds", c("theta_win", "theta_loss", "gamma")))
+
+cat("\n=== Q-LEARN ===\n")
+print(extract_quartiles("fast_res_qlearn.rds", c("alpha_win", "alpha_loss", "beta", "gamma")))
+
+cat("\n=== CORTICO-CEREBELLAR ===\n")
+print(extract_quartiles("fast_res_bio.rds", c("alpha_pc", "lambda_pc", "beta_thal", "kappa_cf", "alpha_gran", "beta_gran", "sigma2_diff", "gamma")))
