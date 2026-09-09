@@ -25,6 +25,7 @@ p_val <- teacher_soft_targets
 N_trials <- length(targets$labels)
 X <- targets$X
 ITI <- targets$ITI
+ITI <- ITI / max(ITI)
 lag_Reward <- targets$lag_reward
 lag_Ch <- targets$lag_ch
 lag_Resp <- targets$lag_resp
@@ -36,11 +37,22 @@ rnn_sigma <- targets$rnn_sigma
 
 # Bio Initialization
 set.seed(42)
-W_gen <- matrix(rnorm(27 * 32, 0, 1/sqrt(32)), nrow=27, ncol=32)
+W_gen <- matrix(rnorm(6 * 32, 0, 1/sqrt(32)), nrow=6, ncol=32)
 W_ach1 <- matrix(rnorm(896 * 32, 0, 1/sqrt(32)), nrow=896, ncol=32)
 W_ach2 <- matrix(rnorm(362 * 896, 0, 1/sqrt(896)), nrow=362, ncol=896)
 W_thal <- matrix(rnorm(32 * 362, 0, 1/sqrt(362)), nrow=32, ncol=362)
-Pi_vec <- rep(1, 27)
+# Compute Pi_mat per participant using inverse variance
+Pi_mat <- matrix(0, nrow=N_trials, ncol=6)
+unique_subjs <- unique(targets$subjs)
+for(s in unique_subjs) {
+    idx <- which(targets$subjs == s)
+    subj_X <- targets$X[idx, ]
+    subj_var <- apply(subj_X, 2, var)
+    raw_prec <- 1.0 / (subj_var + 1e-6)
+    norm_prec <- raw_prec / mean(raw_prec)
+    Pi_mat[idx, ] <- matrix(rep(norm_prec, length(idx)), nrow=length(idx), byrow=TRUE)
+}
+
 
 POPSIZE <- 128
 GENERATIONS <- 40
@@ -108,33 +120,39 @@ q_learning_obj <- function(params_matrix) {
     beta <- params_matrix[3, ind]
     gamma <- params_matrix[4, ind]
     
-    Q <- rep(0.5, 8)
+    Q <- rep(0.5, 2) # Left=1, Right=2
     q_logits <- numeric(N_trials)
-    Q_history <- matrix(0, nrow=N_trials, ncol=8)
+    Q_history <- matrix(0, nrow=N_trials, ncol=2)
     
     stan_data_subj <- targets$subjs
-    stan_data_bd1 <- max.col(targets$X[, 1:8])
-    stan_data_bd2 <- max.col(targets$X[, 9:16])
+    stan_data_bd1 <- targets$X[, 1] # Magnitude Left
+    stan_data_bd2 <- targets$X[, 2] # Magnitude Right
     stan_data_resp <- targets$lag_resp
     stan_data_reward <- targets$lag_reward
     
     current_subj <- -1
     for (t in 1:N_trials) {
-      if (stan_data_subj[t] != current_subj) { Q <- rep(0.5, 8); current_subj <- stan_data_subj[t] }
+      if (stan_data_subj[t] != current_subj) { Q <- rep(0.5, 2); current_subj <- stan_data_subj[t] }
       Q_history[t, ] <- Q
-      b1 <- stan_data_bd1[t]; b2 <- stan_data_bd2[t]
-      p_bd1 <- plogis(beta * (Q[b1] - Q[b2]))
-      if (lag_Resp[t] == 1) {
-         if (lag_Ch[t] == b1) p_switch <- 1 - p_bd1 else p_switch <- p_bd1
-      } else {
-         if (lag_Ch[t] == b1) p_switch <- 1 - p_bd1 else p_switch <- p_bd1
+      
+      ev_left <- Q[1] * stan_data_bd1[t]
+      ev_right <- Q[2] * stan_data_bd2[t]
+      
+      p_bd1 <- plogis(beta * (ev_left - ev_right))
+      
+      # Probability of switching from the previous response
+      if (stan_data_resp[t] == 1) { # Previously chose Left
+         p_switch <- 1 - p_bd1 # Switching means choosing Right
+      } else { # Previously chose Right
+         p_switch <- p_bd1 # Switching means choosing Left
       }
       p_switch <- max(1e-7, min(1-1e-7, p_switch))
       q_logits[t] <- qlogis(p_switch)
       
-      chosen <- ifelse(stan_data_resp[t] == 1, b1, b2)
-      unchosen <- ifelse(stan_data_resp[t] == 1, b2, b1)
+      chosen <- ifelse(stan_data_resp[t] == 1, 1, 2)
+      unchosen <- ifelse(stan_data_resp[t] == 1, 2, 1)
       r <- stan_data_reward[t]
+      
       if (r > 0) {
          Q[chosen] <- Q[chosen] + alpha_win * (1 - Q[chosen])
          Q[unchosen] <- Q[unchosen] + alpha_win * (0 - Q[unchosen])
@@ -148,7 +166,7 @@ q_learning_obj <- function(params_matrix) {
     blend_probs <- pmax(pmin(plogis(blend_logits), 1 - 1e-7), 1e-7)
     bce <- -mean(p_val * log(blend_probs) + (1 - p_val) * log(1 - blend_probs))
     
-    XX_inv <- tryCatch(solve(crossprod(Q_history) + diag(0.01, 8)), error = function(e) NULL)
+    XX_inv <- tryCatch(solve(crossprod(Q_history) + diag(0.01, 2)), error = function(e) NULL)
     if(is.null(XX_inv)) { 
       rmse_mu <- 10.0 
       kinematic_loss <- 10.0
@@ -175,7 +193,7 @@ cortico_obj <- function(params_matrix) {
   if (nrow(params_matrix) > ncol(params_matrix)) params_matrix <- t(params_matrix)
   num_ind <- ncol(params_matrix)
   
-  results <- foreach(ind = 1:num_ind, .combine = cbind, .export=c("N_trials", "X", "W_gen", "W_ach1", "W_ach2", "W_thal", "Pi_vec", "ITI", "rnn_p_logits", "p_val", "rnn_mu", "rnn_sigma")) %dopar% {
+  results <- foreach(ind = 1:num_ind, .combine = cbind, .export=c("N_trials", "X", "W_gen", "W_ach1", "W_ach2", "W_thal", "Pi_mat", "ITI", "rnn_p_logits", "p_val", "rnn_mu", "rnn_sigma")) %dopar% {
     p_alpha_pc <- params_matrix[1, ind]
     p_lambda_pc <- params_matrix[2, ind]
     p_beta_thal <- params_matrix[3, ind]
@@ -186,7 +204,7 @@ cortico_obj <- function(params_matrix) {
     gamma <- params_matrix[8, ind]
     
     # Call the lightning-fast C++ function
-    mu_history <- simulate_bio(N_trials, X, ITI, W_gen, W_ach1, W_ach2, W_thal, Pi_vec, p_alpha_pc, p_lambda_pc, p_beta_thal, p_kappa_cf, p_alpha_gran, p_beta_gran, p_sigma2_diff)
+    mu_history <- simulate_bio(N_trials, X, ITI, W_gen, W_ach1, W_ach2, W_thal, Pi_mat, p_alpha_pc, p_lambda_pc, p_beta_thal, p_kappa_cf, p_alpha_gran, p_beta_gran, p_sigma2_diff)
     
     if (nrow(mu_history) == 1 && is.na(mu_history[1,1])) {
       c(100.0, 1.0 - gamma)

@@ -4,7 +4,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 arma::mat simulate_bio(int N_trials, arma::mat X, arma::vec ITI,
-                       arma::mat W_gen, arma::mat W_ach1, arma::mat W_ach2, arma::mat W_thal, arma::vec Pi_vec,
+                       arma::mat W_gen, arma::mat W_ach1, arma::mat W_ach2, arma::mat W_thal, arma::mat Pi_mat,
                        double p_alpha_pc, double p_lambda_pc, double p_beta_thal, double p_kappa_cf,
                        double p_alpha_gran, double p_beta_gran, double p_sigma2_diff) {
     
@@ -24,7 +24,7 @@ arma::mat simulate_bio(int N_trials, arma::mat X, arma::vec ITI,
         
         arma::vec I_t = X.row(t).t();
         arma::vec I_hat = W_gen * mu;
-        arma::vec eps = Pi_vec % (I_t - I_hat);
+        arma::vec eps = Pi_mat.row(t).t() % (I_t - I_hat);
         
         mu = mu + p_alpha_pc * ((W_gen.t() * eps) - (p_lambda_pc * ITI[t]) * mu + p_beta_thal * (W_thal * D));
         

@@ -65,12 +65,19 @@ cat("\nisolated 50 participants and saved to rnn_phase1_subjects.rds...\n")
 cat("##########################################################################\n")
 
 # process features
-Ch <- numeric(N_trials)
-for (i in 1:N_trials) Ch[i] <- ifelse(stan_data$Resp[i] == 1, stan_data$Bd1[i], stan_data$Bd2[i])
+min_bd <- min(c(stan_data$Bd1, stan_data$Bd2))
+max_bd <- max(c(stan_data$Bd1, stan_data$Bd2))
 
-Switch <- numeric(N_trials);
-lag_Reward <- numeric(N_trials)
-lag_Ch <- numeric(N_trials)
+# Convert points into a continuous float between 0.0 and 1.0
+X_Bd1 <- (stan_data$Bd1 - min_bd) / (max_bd - min_bd)
+X_Bd2 <- (stan_data$Bd2 - min_bd) / (max_bd - min_bd)
+
+Ch_cont <- numeric(N_trials)
+for (i in 1:N_trials) Ch_cont[i] <- ifelse(stan_data$Resp[i] == 1, X_Bd1[i], X_Bd2[i])
+
+Switch <- numeric(N_trials)
+lag_Reward_bin <- numeric(N_trials)
+lag_Reward_cont <- numeric(N_trials)
 lag_RT <- numeric(N_trials)
 lag_Resp <- numeric(N_trials)
 
@@ -78,32 +85,22 @@ current_subj <- -1
 for (i in 1:N_trials) {
 	if (stan_data$subj[i] != current_subj) {
 		Switch[i] <- 0
-		lag_Reward[i] <- 0
-		lag_Ch[i] <- 0
+		lag_Reward_bin[i] <- 0
+		lag_Reward_cont[i] <- 0
 		lag_RT[i] <- 0
 		lag_Resp[i] <- 0
 		current_subj <- stan_data$subj[i]
 	} else {
 		Switch[i] <- ifelse(stan_data$Resp[i] != stan_data$Resp[i-1], 1, 0)
-		lag_Reward[i] <- stan_data$Reward[i-1]
-		lag_Ch[i] <- Ch[i-1]
+		lag_Reward_bin[i] <- stan_data$Reward[i-1]
+		lag_Reward_cont[i] <- Ch_cont[i-1]
 		lag_RT[i] <- stan_data$RT[i-1]
 		lag_Resp[i] <- ifelse(stan_data$Resp[i-1] == 1, 1, 0)
 	}
 }
 
-# rnn matrices
-# two-hot encoding
-# vector of size 8 with two 1's representing the latent feature
-X_Bd1 <- matrix(0, nrow = N_trials, ncol = 8)
-X_Bd2 <- matrix(0, nrow = N_trials, ncol = 8)
-X_lag_Ch <- matrix(0, nrow = N_trials, ncol = 8)
-for (i in 1:N_trials) {
-	X_Bd1[i, stan_data$Bd1[i]] <- 1
-	X_Bd2[i, stan_data$Bd2[i]] <- 1
-	if (lag_Ch[i] > 0) X_lag_Ch[i, lag_Ch[i]] <- 1
-}
-X <- cbind(X_Bd1, X_Bd2, lag_Reward, lag_RT, X_lag_Ch, lag_Resp)
+# 6-Dimensional State Vector
+X <- cbind(X_Bd1, X_Bd2, lag_Reward_bin, lag_Reward_cont, lag_Resp, lag_RT)
 
 # model definition
 SpatialRNN <- nn_module(
@@ -281,7 +278,7 @@ for (ep in 1:20) {
 		preds <- model_final(x_t)
 
         mask <- c(FALSE, rep(TRUE, length(idx)-1))
-        if (sum(mask > 0)) {
+        if (sum(mask) > 0) {
                     p_t <- preds$p[, mask, , drop=FALSE]
                     y_t <- y_switch[, mask, , drop=FALSE]
                     n_switch <- y_t$sum()$item()
@@ -307,8 +304,6 @@ for (ep in 1:20) {
 
 cat("\nSAVING FINAL MODEL\n")
 for (p in model_final$parameters) {
-:q
-
   p$requires_grad_(FALSE)
 }
 torch_save(model_final, "../../results/frozen_rnn_baseline.pt")
