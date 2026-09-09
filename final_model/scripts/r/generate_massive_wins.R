@@ -206,3 +206,32 @@ cat("Bio Exp 2 (Flat / Chaotic):", loo_bio_flat$estimates["elpd_loo", "Estimate"
 cat("Bio Exp 3 (Locked / Zero-Shot):", loo_bio_lock$estimates["elpd_loo", "Estimate"], "\n")
 cat("Bio Exp 4 (Anchored / Guided):", loo_bio_anch$estimates["elpd_loo", "Estimate"], "\n")
 cat("=======================================================\n")
+
+cat("Saving all .rds files...\n")
+
+saveRDS(list(
+  loo_bio_dist = loo_bio_dist,
+  loo_q_dist = loo_q_dist,
+  loo_w_dist = loo_w_dist
+), "../../results/experiment1_distillation_loo.rds")
+
+saveRDS(list(
+  loo_bio_flat = loo_bio_flat,
+  loo_bio_lock = loo_bio_lock,
+  loo_bio_anch = loo_bio_anch,
+  loo_q_emp = loo_q_emp,
+  loo_w_emp = loo_w_emp
+), "../../results/experiment234_empirical_loo.rds")
+
+saveRDS(list(
+  res_bio_dist = res_bio_dist$log_lik_trace,
+  res_bio_flat = res_bio_flat$log_lik_trace,
+  res_bio_lock = res_bio_lock$log_lik_trace,
+  res_bio_anch = res_bio_anch$log_lik_trace,
+  res_q_dist = res_q_dist,
+  res_w_dist = res_w_dist,
+  res_q_emp = res_q_emp,
+  res_w_emp = res_w_emp
+), "../../results/full_mcmc_traces_A.rds")
+
+cat("All results successfully saved to .rds!\n")
