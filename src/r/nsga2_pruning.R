@@ -56,9 +56,13 @@ for(s in unique_subjs) {
 # Distillation Hyperparameter (Gamma)
 gamma <- 0.8  # Heavy reliance on Teacher representations to provide structural tension
 
-# --- MEDIUM PRUNING NSGA-II SETTINGS ---
-POPSIZE <- 80
-GENERATIONS <- 50
+# --- FAST PRUNING NSGA-II SETTINGS (For Swarm Tracking) ---
+POPSIZE <- 40
+GENERATIONS <- 20
+
+# Initialize Global Trackers on the Master Node
+global_history_params <<- list()
+global_history_obj <<- list()
 
 # Run on Dataset A (Subsample for rapid pruning test)
 train_subjs <- unique_subjs[1:50] # Top 50 subjects (Dataset A)
@@ -142,7 +146,10 @@ bio_pruning_obj <- function(params_matrix) {
     c(distillation_loss, structural_cost)
   }
   
-  return(results)
+  res_matrix <- do.call(cbind, results)
+  global_history_params[[length(global_history_params) + 1]] <<- params_matrix
+  global_history_obj[[length(global_history_obj) + 1]] <<- res_matrix
+  return(res_matrix)
 }
 
 # 7 Bio Parameters + 2 Pruning Parameters
@@ -159,5 +166,27 @@ res <- nsga2(bio_pruning_obj, idim = 9, odim = 2,
              vectorized = TRUE)
 
 saveRDS(res, "../../results/nsga2_pruning_results.rds")
+
+# Aggregate and save historical swarm
+history_df <- data.frame()
+for (g in 1:length(global_history_params)) {
+  p_mat <- global_history_params[[g]]
+  o_mat <- global_history_obj[[g]]
+  
+  # For each individual in the generation
+  for(i in 1:ncol(p_mat)) {
+    granule <- round(p_mat[8, i] * 2000)
+    dcn <- round(p_mat[9, i] * 1000)
+    loss <- o_mat[1, i]
+    
+    history_df <- rbind(history_df, data.frame(
+      Generation = g,
+      Granule = granule,
+      DCN = dcn,
+      Loss = loss
+    ))
+  }
+}
+saveRDS(history_df, "../../results/historical_swarm.rds")
 cat("Pruning NSGA-II Complete! Saved to ../../results/nsga2_pruning_results.rds\n")
 stopCluster(cl)
