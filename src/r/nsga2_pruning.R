@@ -146,8 +146,10 @@ bio_pruning_obj <- function(params_matrix) {
 }
 
 # 7 Bio Parameters + 2 Pruning Parameters
-lower_bounds <- c(rep(1e-4, 6), 1e-3, 0.01, 0.01)
-upper_bounds <- c(rep(0.99, 6), 2.0, 1.0, 1.0)
+# p_gran bounded [600, 1000] out of 2000 -> [0.30, 0.50]
+# p_dcn bounded [200, 400] out of 1000 -> [0.20, 0.40]
+lower_bounds <- c(rep(1e-4, 6), 1e-3, 0.30, 0.20)
+upper_bounds <- c(rep(0.99, 6), 2.0, 0.50, 0.40)
 
 res <- nsga2(bio_pruning_obj, idim = 9, odim = 2,
              lower.bounds = lower_bounds,
