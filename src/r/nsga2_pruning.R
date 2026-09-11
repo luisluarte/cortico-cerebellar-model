@@ -156,6 +156,6 @@ res <- nsga2(bio_pruning_obj, idim = 9, odim = 2,
              generations = GENERATIONS,
              vectorized = TRUE)
 
-saveRDS(res, "results/nsga2_pruning_results.rds")
-cat("Pruning NSGA-II Complete! Saved to results/nsga2_pruning_results.rds\n")
+saveRDS(res, "../../results/nsga2_pruning_results.rds")
+cat("Pruning NSGA-II Complete! Saved to ../../results/nsga2_pruning_results.rds\n")
 stopCluster(cl)
