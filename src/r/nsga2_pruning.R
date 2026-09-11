@@ -56,9 +56,9 @@ for(s in unique_subjs) {
 # Distillation Hyperparameter (Gamma)
 gamma <- 0.8  # Heavy reliance on Teacher representations to provide structural tension
 
-# --- FAST PRUNING NSGA-II SETTINGS ---
-POPSIZE <- 40
-GENERATIONS <- 20
+# --- MEDIUM PRUNING NSGA-II SETTINGS ---
+POPSIZE <- 80
+GENERATIONS <- 50
 
 # Run on Dataset A (Subsample for rapid pruning test)
 train_subjs <- unique_subjs[1:50] # Top 50 subjects (Dataset A)
