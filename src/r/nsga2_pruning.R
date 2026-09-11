@@ -146,7 +146,7 @@ bio_pruning_obj <- function(params_matrix) {
     c(distillation_loss, structural_cost)
   }
   
-  res_matrix <- do.call(cbind, results)
+  res_matrix <- results
   global_history_params[[length(global_history_params) + 1]] <<- params_matrix
   global_history_obj[[length(global_history_obj) + 1]] <<- res_matrix
   return(res_matrix)
