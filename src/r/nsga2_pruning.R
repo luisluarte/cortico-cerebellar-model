@@ -135,9 +135,9 @@ bio_pruning_obj <- function(params_matrix) {
         distillation_loss <- total_mu_mse / valid_count
     }
     
-    # Objective 2: Structural Network Cost (Rent's Rule Approximation)
-    # Minimizing the survival ratios mathematically forces pruning
-    structural_cost <- p_gran_ratio + p_dcn_ratio
+    # Objective 2: Structural Network Cost (Dropped per user request)
+    # By setting this to 0, NSGA-II will purely optimize Distillation Loss
+    structural_cost <- 0
     
     c(distillation_loss, structural_cost)
   }
