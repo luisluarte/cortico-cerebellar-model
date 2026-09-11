@@ -142,7 +142,7 @@ bio_pruning_obj <- function(params_matrix) {
     c(distillation_loss, structural_cost)
   }
   
-  return(t(results))
+  return(results)
 }
 
 # 7 Bio Parameters + 2 Pruning Parameters
