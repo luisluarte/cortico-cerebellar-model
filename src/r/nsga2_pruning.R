@@ -87,6 +87,7 @@ cat("Starting Biological Evolutionary Pruning NSGA-II...\n")
 
 # Objective function for Bio Pruning
 bio_pruning_obj <- function(params_matrix) {
+  if (is.null(nrow(params_matrix))) params_matrix <- matrix(params_matrix, ncol = 1)
   if (nrow(params_matrix) > ncol(params_matrix)) params_matrix <- t(params_matrix)
   num_ind <- ncol(params_matrix)
   
@@ -152,7 +153,8 @@ res <- nsga2(bio_pruning_obj, idim = 9, odim = 2,
              lower.bounds = lower_bounds,
              upper.bounds = upper_bounds,
              popsize = POPSIZE,
-             generations = GENERATIONS)
+             generations = GENERATIONS,
+             vectorized = TRUE)
 
 saveRDS(res, "results/nsga2_pruning_results.rds")
 cat("Pruning NSGA-II Complete! Saved to results/nsga2_pruning_results.rds\n")
