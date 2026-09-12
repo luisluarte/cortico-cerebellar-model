@@ -40,22 +40,22 @@ Rscript requirements.R
 Each manuscript figure corresponds directly to a single, executable analytical script. Ensure your working directory is the repository root, then run the corresponding script.
 
 ### 1. Representation & The Latent State
-- **Figure 5 (Latent Decoding):** `Rscript decode_latent_traces.R`
-- **Figure 18 (Representation Collapse):** `Rscript correlate_representation.R`
+- **Figure 5 (Latent Decoding):** `Rscript src/analysis/decode_latent_traces.R`
+- **Figure 18 (Representation Collapse):** `Rscript src/analysis/correlate_representation.R`
 
 ### 2. Autonomous Attractor Dynamics
-- **Figure 6 (Sensory Deprivation Hallucinations):** `Rscript run_hallucination_beta_thal.R`
-- **Figure 7 (Lesioning the Thalamic Loop):** `Rscript run_lesion_beta_thal.R`
-- **Figure 17 (Internal Confidence Phase Transition):** `Rscript measure_confidence.R`
+- **Figure 6 (Sensory Deprivation Hallucinations):** `Rscript src/simulations/run_hallucination_beta_thal.R`
+- **Figure 7 (Lesioning the Thalamic Loop):** `Rscript src/simulations/run_lesion_beta_thal.R`
+- **Figure 17 (Internal Confidence Phase Transition):** `Rscript src/analysis/measure_confidence.R`
 
 ### 3. Empirical Behavioral Topography
-- **Figure 12 (3D Behavioral Landscape):** `Rscript plot_behavioral_landscape.R`
-- **Figure 13 (The Behavioral U-Shape):** `Rscript plot_binned_markovian.R`
-- **The Compensatory Manifold (Beta vs Alpha):** `Rscript test_params.R`
+- **Figure 12 (3D Behavioral Landscape):** `Rscript src/plotting/plot_behavioral_landscape.R`
+- **Figure 13 (The Behavioral U-Shape):** `Rscript src/plotting/plot_binned_markovian.R`
+- **The Compensatory Manifold (Beta vs Alpha):** `Rscript src/analysis/test_params.R`
 
 ### 4. Causal & Generative Simulations
-- **Figure 14 (Simulated Generative Agent):** `Rscript run_agent_simulation.R`
-- **Figure 15 (Restless Bandit Volatility):** `Rscript run_restless_sweep.R`
+- **Figure 14 (Simulated Generative Agent):** `Rscript src/simulations/run_agent_simulation.R`
+- **Figure 15 (Restless Bandit Volatility):** `Rscript src/simulations/run_restless_sweep.R`
 
 ---
 
