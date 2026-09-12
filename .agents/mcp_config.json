@@ -1,0 +1,45 @@
+﻿{
+  "mcpServers": {
+    "fetch": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": ["mcp-server-fetch"]
+    },
+    "git": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": [
+        "mcp-server-git",
+        "-r",
+        "C:\\Users\\DCCS5\\Documents\\GitHub\\cortico-cerebellar-model"
+      ]
+    },
+    "sqlite": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": ["mcp-server-sqlite"]
+    },
+    "duckdb": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": [
+        "mcp-server-duckdb",
+        "--db-path",
+        "C:\\Users\\DCCS5\\Documents\\GitHub\\cortico-cerebellar-model\\data.duckdb"
+      ]
+    },
+    "memory": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": [
+        "--from",
+        "mcp-memory-service",
+        "memory",
+        "server"
+      ]
+    },
+    "arxiv": {
+      "command": "C:\\Users\\DCCS5\\.local\\bin\\uvx.exe",
+      "args": [
+        "--with",
+        "mcp<2",
+        "arxiv-mcp"
+      ]
+    }
+  }
+}

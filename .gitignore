@@ -55,3 +55,7 @@ h_topo6_*
 !eval_*.R
 !m*_*.R
 !d*_*.R
+
+# MCP and database files
+*.duckdb
+*.duckdb.wal

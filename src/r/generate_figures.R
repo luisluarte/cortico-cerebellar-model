@@ -95,7 +95,27 @@ data_p1 <- read_rds("../../results/landscape_data.rds") %>%
   mutate(
     value = scale(value)
   ) %>%
-  filter(alpha_pc > 0.0005)
+  filter(alpha_pc > 0.0005)a
+
+# expected calibration error
+data_p2 <- read_rds("../../results/ECE_calibrated.rds") %>%
+  as_tibble()
+
+# rnn performance
+data_p3 <- read_rds("../../results/rnn_results.rds")
+
+# pareto front
+data_p4 <- read_rds("../../results/distillation_2_fast_pareto.rds") %>%
+  as_tibble()
+
+# oob results of the pareto front
+data_p5 <- read_rds("../../results/lnso_5fold_results.rds") %>%
+  as_tibble()
+
+# parameter stability
+data_p6 <- read_rds("../../results/parameter_stability.rds") %>%
+  as_tibble()
+
 
 scale_factor <- 3
 p1 <- data_p1 %>%
@@ -118,9 +138,135 @@ p1 <- data_p1 %>%
   )
 p1
 
+p2 <- data_p2 %>%
+  group_by(bin) %>%
+  summarise(
+    cal_prob_m = mean(cal_prob),
+    empirical = mean(true_label),
+    .groups = "drop_last"
+  ) %>%
+  ggplot(aes(
+    cal_prob_m, empirical
+  )) +
+  geom_line() +
+  geom_point(aes(size = empirical)) +
+  geom_abline(slope = 1, intercept = 0, color = "red") +
+  stat_cor(method = "pearson") +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 1)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 1)) +
+  theme_matplotlib_log() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = scale_factor * 6),
+    strip.background = element_rect(fill = "white", color = "black"),
+    plot.margin = margin(t = 0.1, r = 0.1, b = 0.1, l = 0.1, unit = "cm"),
+    aspect.ratio = 1
+  )
+p2
+
+p3 <- data_p3 %>%
+  pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
+  ggplot(aes(metric, value)) +
+  geom_point(shape = 21, size = 5, aes(fill = metric),
+             position = position_jitter(width = 0.1)) +
+  stat_summary(aes(
+    group = metric
+  ), fun.data = "mean_se", geom = "pointrange", size = 1) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 1)) +
+  theme_matplotlib_log() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = scale_factor * 6),
+    strip.background = element_rect(fill = "white", color = "black"),
+    plot.margin = margin(t = 0.1, r = 0.1, b = 0.1, l = 0.1, unit = "cm"),
+    aspect.ratio = 1
+  )
+p3
+
+p4 <- data_p4 %>%
+  filter(Pareto_Optimal == TRUE) %>%
+  ggplot(aes(
+    Teacher_Penalty, NLL, color = Model
+  )) +
+  geom_line(linewidth = 1.5) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0.25, 1)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 1)) +
+  scale_color_viridis_d() +
+  theme_matplotlib_log() +
+  theme(
+    legend.position = "top",
+    text = element_text(size = scale_factor * 6),
+    strip.background = element_rect(fill = "white", color = "black"),
+    plot.margin = margin(t = 0.1, r = 0.1, b = 0.1, l = 0.1, unit = "cm"),
+    aspect.ratio = 1
+  )
+p4
+
+p5 <- data_p5 %>%
+  pivot_longer(-c(Fold, Model, Quartile)) %>%
+  # filter(name %in% c("Composite_Emp", "Composite_Teacher")) %>%
+  ggplot(aes(
+    Quartile, value, color = Model
+  )) +
+  stat_summary(
+    fun.data = "mean_se",
+    geom = "line",
+    aes(group = Model)
+  ) +
+  stat_summary(
+    fun.data = "mean_se",
+    geom = "errorbar",
+    width = 0.1,
+    aes(group = Model)
+  ) +
+  scale_color_viridis_d() +
+  theme_matplotlib_log() +
+  theme(
+    legend.position = "top",
+    text = element_text(size = scale_factor * 6),
+    strip.background = element_rect(fill = "white", color = "black"),
+    plot.margin = margin(t = 0.1, r = 0.1, b = 0.1, l = 0.1, unit = "cm"),
+    aspect.ratio = 1
+  ) +
+  facet_wrap(~name, scales = "free")
+p5
+
 ggsave(
   plot = p1,
-  file = "../../figures/nll_landscape.svg",
+  file = "../../figures/nll_landscape.pdf",
   width = 1000, height = 1000, units = "px",
   scale = 3
 )
+knitr::plot_crop("../../figures/nll_landscape.pdf")
+
+ggsave(
+  plot = p2,
+  file = "../../figures/ECE.pdf",
+  width = 1000, height = 1000, units = "px",
+  scale = 3
+)
+knitr::plot_crop("../../figures/ECE.pdf")
+
+ggsave(
+  plot = p3,
+  file = "../../figures/oob_rnn.pdf",
+  width = 1000, height = 1000, units = "px",
+  scale = 3
+)
+knitr::plot_crop("../../figures/obb_rnn.pdf")
+
+ggsave(
+  plot = p4,
+  file = "../../figures/teacher_student.pdf",
+  width = 1000, height = 1000, units = "px",
+  scale = 3
+)
+knitr::plot_crop("../../figures/teacher_student.pdf")
+
+ggsave(
+  plot = p5,
+  file = "../../figures/oob_nsga.pdf",
+  width = 1000, height = 1000, units = "px",
+  scale = 3
+)
+knitr::plot_crop("../../figures/oob_nsga.pdf")

@@ -1,9 +1,13 @@
+%!TeX TXS-program:compile = txs:///pdflatex | txs:///biber | txs:///pdflatex | txs:///pdflatex | txs:///clean
 \documentclass{beamer}
 \usepackage[style=apa]{biblatex}
 \usepackage{booktabs}
 \usepackage{dsfont}
 \usepackage{graphicx}
+\usepackage{units}
 \usepackage{transparent}
+\setbeamertemplate{navigation symbols}{}
+\usefonttheme[onlymath]{serif}
 \addbibresource{bibliography.bib}
 
 
@@ -13,16 +17,85 @@
 
 \begin{document}
 	\frame{\titlepage}
-	\begin{frame}{RNN distillation smoothes the NLL landscape}
-		\begin{figure}
-			\vspace{1cm}
-			\centering
-		    \includegraphics[width=1\textwidth]{../figures/nll_landscape.pdf}
-		\end{figure}
+	\begin{frame}{Cortex hallucination of sensory input}
+		\begin{equation}
+			\hat{\mathbf{I}} = \mathbf{W}_{gen} \cdot \boldsymbol{\mu}_{t}
+		\end{equation}
+		\begin{itemize}
+			\item $\hat{\mathbf{I}}$, is the $\textit{hallucination}$ of equal dimension to $\mathbf{I}$ $\textit{actual input}$
+			\item $\mathbf{W}_{gen}$ is the generative matrix than makes the lower-dimension projection, intialized random and fixed $\mathcal{N}(0, \nicefrac{1}{\sqrt{\dim{\boldsymbol{\mu}}}})$
+			\item $\boldsymbol{\mu}_{t}$ is the $\textit{cortical state}$ at time $t$
+		\end{itemize}
 	\end{frame}
 	
-	\begin{frame}{RNN acts as an optimal boundary for model comparison, in the general case}
-		content...
+	\begin{frame}{Cortical prediction error}
+		\begin{equation}
+			\epsilon = \Pi \odot (\mathbf{I}_{t} - \hat{\mathbf{I}}_{t})
+		\end{equation}
+		\begin{itemize}
+			\item The cortex makes a $\textit{hallucination}$ which acts as active inference of the world, then the participant makes an actual choice generating the sensory vector $\mathbf{I}_{t}$
+			\item To build $\Pi$ as as the precision weighting, we choose the most simplest one. Static anatomical precision, let $\Pi_{raw, i} = \nicefrac{1}{\sigma(\mathbf{I}_{i})}$ be the raw precision weighting vector for input $i$ with variance $\sigma(\mathbf{I}_{i})$, then we generate $\Pi = \nicefrac{\Pi_{raw}}{\bar{\Pi}_{raw}}$ to be the normalized precision weighting
+			\item Element-wise multiplication means we build prediction error $\epsilon$ as the precision weighted prediction error
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Propagation of cortical state in to the Cerebellum}
+		\begin{equation}
+			\mathbf{G}_{t} = \mathbf{W}_{ach1} \cdot \boldsymbol{\mu}_{t}
+		\end{equation}
+		\begin{itemize}
+			\item $\mathbf{G}_{t}$ is the Granule Layer state at time $t$, defined as a Marr-Albus-Ito random sparse projection
+			\item We modeled this as an Achlioptas random sparse projection ($896 \times 32$), where each weight $w_{i, j}$ is assigned with probability $p$: $-1$ or $1$, and 0 with $1 - 2p$, setting sparisity ($1 - 2p$) to 90\% zeros
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Cebellum memory or eligibility trace}
+		When the cortex makes a prediction and initiates an action, there is some delay for this feedback to arrive. How do we solve the problem of pairing some particular $\mathbf{G}_{t}$ with a given feedback. We need to leave an $\textit{eligibility trace}$
+		\begin{equation}
+			\mathbf{Z}_{t} = (1 - \beta_{gran}) \cdot \mathbf{Z}_{t-1} + \alpha_{gran} \cdot \mathbf{G}_{t}
+		\end{equation}
+		\begin{itemize}
+			\item Where $\mathbf{G}_{t}$ is the instantaneous firing of the Granule Layer
+			\item $\alpha_{gran}$ is the parameter that controls how aggresively the layer updates
+			\item $(1 - \beta_{gran})$ is the $\textit{leaky bucket}$, that decays the trace on every trial
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Cerebellum learning}
+		To learn the Cerebellum projects the 6-Dimensional precision weighted error $\epsilon$ to a single dimension (relating this to the Inferior Olive)
+		\begin{equation}
+			\left|\bar{\epsilon}\right| = \frac{1}{d} \sum_{i=1}^{d} 	\left|\bar{\epsilon_{t,i}}\right|
+		\end{equation}
+		With that scalar error we update the Granule Layer trace in its Purkinje Cell representation via anti-Hebbian learning
+		\begin{equation}
+			W_{purk, t} = W_{purk, t-1} - \kappa (\left|\bar{\epsilon}\right| \cdot \mathbf{Z}_{t})
+		\end{equation}
+	\end{frame}
+	
+	\begin{frame}{Cerebellum compression}
+		\begin{equation}
+			\mathbf{D}_{t} = \mathbf{W}_{ach2} (\mathbf{G}_{t} \odot \mathbf{W}_{purk, t})
+		\end{equation}
+		\begin{itemize}
+			\item $\mathbf{D}_{t} \in \mathbb{R}^{362}$  is the Cerebellum forward pass
+			\item $\mathbf{G}_{t} \odot \mathbf{W}_{purk, t}$ is the element-wise multiplication between the Granule Layer current state and the LTD Purkinje layer we previously constructed
+			\item Finally with $\mathbf{W}_{purk, t}$ we perform an random sparse matrix compression into the 362 dimension of the cerebellar forward pass
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{The loop-back: thalamo-cortical pass}
+		\begin{equation}
+			\mu_{t+1} = \mu_{t} + \alpha_{c} [(\mathbf{W}^{T}_{gen} \cdot \epsilon_{t}) - (\lambda_{c} \cdot ITI_{t} \cdot \mu_{t}) + \beta_{thal} (\mathbf{W}_{thal} \cdot \mathbf{D}_{t})]
+		\end{equation}
+		\begin{itemize}
+			\item This is the Cortical trace update, $\mathbf{W}^{T}_{gen} \cdot \epsilon_{t}$ projects the error back into the cortical dimension $6 \rightarrow 32$, and we perform gradient descent over a time-decaying trace $\lambda_{c} \cdot ITI_{t} \cdot \mu_{t}$
+			\item $\mathbf{W}_{thal}$ is the connectivity from cerebellum to cortex $362 \rightarrow 32$, so $\mathbf{W}_{thal} \cdot \mathbf{D}_{t}$ is the cerebellum-cortex forward pass, which via $\beta_{thal}$ pushes the cortex into the non-linear projection
+			\item Finally, the trace is updated via learning rate $\alpha_{c}$ 
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Converting a trace into action and reaction-time}
+		s
 	\end{frame}
 	
 \end{document}

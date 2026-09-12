@@ -1,0 +1,6 @@
+{
+    "r.lsp.diagnostics": false,
+    "[r]": {
+        "editor.defaultFormatter": "lorenzwalthert.styler"
+    }
+}

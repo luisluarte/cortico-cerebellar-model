@@ -1,0 +1,4 @@
+--- High-Dimensional Landscape Metrics (Averaged across N=50 MCMC Posteriors) ---
+Mean Lipschitz Smoothness (L = max eigenvalue): 2.4718
+Mean Minimum Eigenvalue: 0.8322
+Mean Gradient Isotropy / Condition Number (Kappa): 2.9834
