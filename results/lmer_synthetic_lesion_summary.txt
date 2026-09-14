@@ -1,0 +1,48 @@
+Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: logit_P ~ Condition * State * Delta_Beta + (1 | Subject)
+   Data: trial_df
+
+REML criterion at convergence: 23344
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.00409 -0.38297 -0.00402  0.35964  2.87784 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Subject  (Intercept)  0.6857  0.8281  
+ Residual             12.3686  3.5169  
+Number of obs: 4344, groups:  Subject, 50
+
+Fixed effects:
+                                              Estimate Std. Error         df
+(Intercept)                                    0.05606    0.23093   77.82128
+ConditionOptimized                             0.25755    0.19824 4284.58947
+StateReversal                                 -0.14095    0.26774 4304.16415
+Delta_Beta                                     0.24477    0.30137   83.62028
+ConditionOptimized:StateReversal              -0.78060    0.37420 4284.51340
+ConditionOptimized:Delta_Beta                 -0.20641    0.26514 4284.95571
+StateReversal:Delta_Beta                      -0.01020    0.35264 4300.36797
+ConditionOptimized:StateReversal:Delta_Beta    0.48317    0.48677 4284.80907
+                                            t value Pr(>|t|)  
+(Intercept)                                   0.243    0.809  
+ConditionOptimized                            1.299    0.194  
+StateReversal                                -0.526    0.599  
+Delta_Beta                                    0.812    0.419  
+ConditionOptimized:StateReversal             -2.086    0.037 *
+ConditionOptimized:Delta_Beta                -0.779    0.436  
+StateReversal:Delta_Beta                     -0.029    0.977  
+ConditionOptimized:StateReversal:Delta_Beta   0.993    0.321  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) CndtnO SttRvr Dlt_Bt CnO:SR CO:D_B SR:D_B
+CndtnOptmzd -0.432                                          
+StateRevrsl -0.326  0.372                                   
+Delta_Beta  -0.770  0.346  0.261                            
+CndtnOpt:SR  0.228 -0.530 -0.708 -0.183                     
+CndtnOp:D_B  0.337 -0.776 -0.291 -0.447  0.411              
+SttRvrs:D_B  0.259 -0.296 -0.768 -0.342  0.544  0.382       
+CndO:SR:D_B -0.183  0.423  0.551  0.243 -0.766 -0.544 -0.718

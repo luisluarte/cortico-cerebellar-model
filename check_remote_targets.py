@@ -1,0 +1,10 @@
+import paramiko
+client = paramiko.SSHClient()
+client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.connect('100.121.224.32', username='niconicoluarte', password='dw4yb26f')
+stdin, stdout, stderr = client.exec_command('ls -l cortico-cerebellar-model/src/r/distillation_targets_v2.rds')
+out = stdout.read().decode()
+err = stderr.read().decode()
+print("OUT:", out)
+print("ERR:", err)
+client.close()

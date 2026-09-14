@@ -1,0 +1,9 @@
+State = Stable:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.0503 0.0952 Inf  -0.528  0.5972
+
+State = Reversal:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.2007 0.1990 Inf  -1.007  0.3141
+
+Results are given on the log odds ratio (not the response) scale. 

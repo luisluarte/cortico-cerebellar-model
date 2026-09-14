@@ -1,0 +1,26 @@
+State = Stable, log_Delta_Beta = -1.592:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized   0.1068   0.07422    0.1415
+
+State = Reversal, log_Delta_Beta = -1.592:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized   0.0721   0.01720    0.1311
+
+State = Stable, log_Delta_Beta = -1.013:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized   0.0373   0.00449    0.0698
+
+State = Reversal, log_Delta_Beta = -1.013:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized  -0.0108  -0.07816    0.0544
+
+State = Stable, log_Delta_Beta = -0.596:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized  -0.0144  -0.05901    0.0305
+
+State = Reversal, log_Delta_Beta = -0.596:
+ contrast             estimate lower.HPD upper.HPD
+ Lesioned - Optimized  -0.0701  -0.16136    0.0254
+
+Point estimate displayed: median 
+HPD interval probability: 0.95 

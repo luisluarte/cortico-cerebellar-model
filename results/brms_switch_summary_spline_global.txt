@@ -1,0 +1,42 @@
+ Family: beta 
+  Links: mu = logit; phi = log 
+Formula: P_Calibrated ~ Condition * State + s(Delta_Beta, by = Condition) + (1 | Subject) 
+         phi ~ 1
+   Data: long_df (Number of observations: 3144) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Smoothing Spline Hyperparameters:
+                                     Estimate Est.Error l-95% CI u-95% CI Rhat
+sds(sDelta_BetaConditionLesioned_1)      2.55      1.33     0.86     5.94 1.00
+sds(sDelta_BetaConditionOptimized_1)     0.89      0.82     0.03     3.04 1.00
+                                     Bulk_ESS Tail_ESS
+sds(sDelta_BetaConditionLesioned_1)      1165     1927
+sds(sDelta_BetaConditionOptimized_1)     1699     2107
+
+Multilevel Hyperparameters:
+~Subject (Number of levels: 50) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.42      0.05     0.32     0.54 1.00     1150     1892
+
+Regression Coefficients:
+                                 Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                           -0.36      0.07    -0.50    -0.21 1.00
+phi_Intercept                       -1.12      0.02    -1.16    -1.08 1.00
+ConditionOptimized                  -0.04      0.07    -0.17     0.10 1.00
+StateReversal                        0.04      0.06    -0.08     0.17 1.00
+ConditionOptimized:StateReversal     0.03      0.12    -0.21     0.27 1.00
+sDelta_Beta:ConditionLesioned_1     -8.09      3.79   -16.26    -1.73 1.00
+sDelta_Beta:ConditionOptimized_1     0.14      2.32    -4.57     5.40 1.00
+                                 Bulk_ESS Tail_ESS
+Intercept                            1019     1378
+phi_Intercept                        4738     2585
+ConditionOptimized                   3897     3249
+StateReversal                        3541     3114
+ConditionOptimized:StateReversal     3315     3196
+sDelta_Beta:ConditionLesioned_1      1243     1864
+sDelta_Beta:ConditionOptimized_1     1644     1715
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).

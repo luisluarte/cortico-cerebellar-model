@@ -1,0 +1,25 @@
+State = Stable, log_Delta_Beta = -1.592:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized   0.1106 0.0736 Inf   1.503  0.1329
+
+State = Reversal, log_Delta_Beta = -1.592:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.3179 0.1210 Inf  -2.632  0.0085
+
+State = Stable, log_Delta_Beta = -0.942:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized   0.0121 0.0686 Inf   0.177  0.8595
+
+State = Reversal, log_Delta_Beta = -0.942:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.2046 0.1430 Inf  -1.427  0.1535
+
+State = Stable, log_Delta_Beta = -0.583:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.0421 0.0864 Inf  -0.488  0.6258
+
+State = Reversal, log_Delta_Beta = -0.583:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.1421 0.1950 Inf  -0.728  0.4669
+
+Results are given on the log odds ratio (not the response) scale. 

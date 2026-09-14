@@ -59,3 +59,20 @@ h_topo6_*
 # MCP and database files
 *.duckdb
 *.duckdb.wal
+
+# LaTeX auxiliary build files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+*.synctex.gz
+*.run.xml
+*.toc
+*.lof
+*.lot
+

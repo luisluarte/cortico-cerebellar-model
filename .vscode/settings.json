@@ -2,5 +2,17 @@
     "r.lsp.diagnostics": false,
     "[r]": {
         "editor.defaultFormatter": "lorenzwalthert.styler"
-    }
+    },
+    "r.alwaysUseActiveTerminal": false,
+    "r.rterm.windows": "C:\\Windows\\System32\\OpenSSH\\ssh.exe",
+    "r.rterm.option": [
+        "-L",
+        "8288:127.0.0.1:8288",
+        "-t",
+        "niconicoluarte@arch-compute",
+        "cd cortico-cerebellar-model && R"
+    ],
+    "r.plot.useHttpgd": true,
+    "r.bracketedPaste": true,
+    "r.session.nativePipe": false
 }

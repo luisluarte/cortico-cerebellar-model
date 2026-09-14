@@ -42,14 +42,17 @@ List simulate_bio_probes(int N_trials, arma::mat X, arma::vec ITI,
         arma::vec eps = Pi_mat.row(t).t() % (I_t - I_hat);
         
         mu = mu + p_alpha_pc * ((W_gen.t() * eps) - (p_lambda_pc * ITI[t]) * mu + p_beta_thal * (sub_W_thal * D));
+        mu = arma::clamp(mu, -50.0, 50.0); // Prevent infinity
         
         arma::vec G = sub_W_ach1 * mu;
         Z = (1.0 - p_beta_gran) * Z + p_alpha_gran * G;
         double eps_mag = arma::mean(arma::abs(eps));
         W_purk = W_purk - p_kappa_cf * (eps_mag * Z);
+        W_purk = arma::clamp(W_purk, -50.0, 50.0); // Prevent infinity
         
         arma::vec P = G % W_purk;
         D = sub_W_ach2 * P;
+        D = arma::clamp(D, -50.0, 50.0);
         
         mu_history.row(t) = mu.t();
         Z_history.row(t) = Z.t();

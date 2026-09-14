@@ -1,0 +1,35 @@
+ Family: binomial  ( logit )
+Formula:          
+cbind(Perseverations, Non_Perseverations) ~ Condition * State *  
+    Delta_Beta + (1 | Subject)
+Data: agg_df
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+    879.2     908.9    -430.6     861.2       191 
+
+Random effects:
+
+Conditional model:
+ Groups  Name        Variance Std.Dev.
+ Subject (Intercept) 0.08159  0.2856  
+Number of obs: 200, groups:  Subject, 50
+
+Conditional model:
+                                            Estimate Std. Error z value
+(Intercept)                                  0.01693    0.10243   0.165
+ConditionOptimized                           0.04505    0.11362   0.396
+StateReversal                               -0.01138    0.15164  -0.075
+Delta_Beta                                   0.10115    0.13450   0.752
+ConditionOptimized:StateReversal            -0.30880    0.21395  -1.443
+ConditionOptimized:Delta_Beta               -0.00675    0.15151  -0.045
+StateReversal:Delta_Beta                    -0.11193    0.19428  -0.576
+ConditionOptimized:StateReversal:Delta_Beta  0.28423    0.27489   1.034
+                                            Pr(>|z|)
+(Intercept)                                    0.869
+ConditionOptimized                             0.692
+StateReversal                                  0.940
+Delta_Beta                                     0.452
+ConditionOptimized:StateReversal               0.149
+ConditionOptimized:Delta_Beta                  0.964
+StateReversal:Delta_Beta                       0.565
+ConditionOptimized:StateReversal:Delta_Beta    0.301

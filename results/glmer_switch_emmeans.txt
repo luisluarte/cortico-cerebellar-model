@@ -1,0 +1,38 @@
+=== Marginal Means (Logit Scale) ===
+State = Stable:
+ Condition   emmean     SE  df asymp.LCL asymp.UCL
+ Lesioned  -0.05789 0.0486 Inf    -0.153    0.0374
+ Optimized -0.08043 0.0674 Inf    -0.212    0.0516
+
+State = Reversal:
+ Condition   emmean     SE  df asymp.LCL asymp.UCL
+ Lesioned  -0.00998 0.0659 Inf    -0.139    0.1193
+ Optimized  0.17663 0.2080 Inf    -0.232    0.5850
+
+Results are given on the logit (not the response) scale. 
+Confidence level used: 0.95 
+
+=== Marginal Means (Response Probability Scale) ===
+State = Stable:
+ Condition response     SE  df asymp.LCL asymp.UCL
+ Lesioned     0.486 0.0121 Inf     0.462     0.509
+ Optimized    0.480 0.0168 Inf     0.447     0.513
+
+State = Reversal:
+ Condition response     SE  df asymp.LCL asymp.UCL
+ Lesioned     0.498 0.0165 Inf     0.465     0.530
+ Optimized    0.544 0.0517 Inf     0.442     0.642
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale 
+
+=== Pairwise Contrasts ===
+State = Stable:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized   0.0225 0.0671 Inf   0.336  0.7369
+
+State = Reversal:
+ contrast             estimate     SE  df z.ratio p.value
+ Lesioned - Optimized  -0.1866 0.2130 Inf  -0.878  0.3801
+
+Results are given on the log odds ratio (not the response) scale. 

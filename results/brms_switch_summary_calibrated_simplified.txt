@@ -1,0 +1,40 @@
+ Family: beta 
+  Links: mu = logit; phi = log 
+Formula: P_Calibrated ~ Condition + State + s(Delta_Beta, by = Condition) + (1 | Subject) 
+         phi ~ 1
+   Data: long_df (Number of observations: 3144) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Smoothing Spline Hyperparameters:
+                                     Estimate Est.Error l-95% CI u-95% CI Rhat
+sds(sDelta_BetaConditionLesioned_1)      2.48      1.28     0.74     5.69 1.01
+sds(sDelta_BetaConditionOptimized_1)     0.95      0.90     0.03     3.34 1.00
+                                     Bulk_ESS Tail_ESS
+sds(sDelta_BetaConditionLesioned_1)       859      954
+sds(sDelta_BetaConditionOptimized_1)     1513     1949
+
+Multilevel Hyperparameters:
+~Subject (Number of levels: 50) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.42      0.06     0.32     0.54 1.00      998     1844
+
+Regression Coefficients:
+                                 Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                           -0.36      0.07    -0.51    -0.22 1.00
+phi_Intercept                       -1.12      0.02    -1.16    -1.08 1.00
+ConditionOptimized                  -0.03      0.06    -0.15     0.10 1.00
+StateReversal                        0.05      0.06    -0.06     0.16 1.00
+sDelta_Beta:ConditionLesioned_1     -7.74      3.90   -16.36    -1.11 1.00
+sDelta_Beta:ConditionOptimized_1     0.16      2.44    -4.86     5.07 1.00
+                                 Bulk_ESS Tail_ESS
+Intercept                             877     1420
+phi_Intercept                        4995     3403
+ConditionOptimized                   4776     2988
+StateReversal                        4696     2711
+sDelta_Beta:ConditionLesioned_1       864     1160
+sDelta_Beta:ConditionOptimized_1     1446     1391
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).

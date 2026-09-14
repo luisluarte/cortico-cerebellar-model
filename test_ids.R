@@ -1,0 +1,7 @@
+df <- read.csv('data/behavioral_compilate.csv')
+p_emp <- unique(df$participant_id)
+targets <- readRDS('src/r/distillation_targets_v2.rds')
+p_tgt <- unique(targets$subjs)
+cat('Emp:', head(p_emp, 3), '\n')
+cat('Tgt:', head(p_tgt, 3), '\n')
+cat('Match?', all(p_tgt %in% p_emp), '\n')

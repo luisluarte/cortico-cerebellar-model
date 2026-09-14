@@ -1,0 +1,48 @@
+Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: P_Switch ~ Condition * Time_Since_Rev * Delta_Beta + (1 | Subject)
+   Data: df_long
+
+REML criterion at convergence: 1640.4
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.48608 -1.07431  0.04347  1.02373  1.61176 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Subject  (Intercept) 0.002815 0.05306 
+ Residual             0.185879 0.43114 
+Number of obs: 1370, groups:  Subject, 50
+
+Fixed effects:
+                                               Estimate Std. Error         df
+(Intercept)                                   5.503e-01  4.721e-02  6.621e+02
+ConditionOptimized                            5.547e-02  6.448e-02  1.315e+03
+Time_Since_Rev                                1.140e-03  1.614e-02  1.354e+03
+Delta_Beta                                   -6.590e-02  6.226e-02  7.142e+02
+ConditionOptimized:Time_Since_Rev            -9.496e-03  2.273e-02  1.315e+03
+ConditionOptimized:Delta_Beta                -1.226e-01  8.524e-02  1.315e+03
+Time_Since_Rev:Delta_Beta                    -1.637e-03  2.109e-02  1.350e+03
+ConditionOptimized:Time_Since_Rev:Delta_Beta  3.685e-02  2.972e-02  1.315e+03
+                                             t value Pr(>|t|)    
+(Intercept)                                   11.656   <2e-16 ***
+ConditionOptimized                             0.860    0.390    
+Time_Since_Rev                                 0.071    0.944    
+Delta_Beta                                    -1.058    0.290    
+ConditionOptimized:Time_Since_Rev             -0.418    0.676    
+ConditionOptimized:Delta_Beta                 -1.438    0.151    
+Time_Since_Rev:Delta_Beta                     -0.078    0.938    
+ConditionOptimized:Time_Since_Rev:Delta_Beta   1.240    0.215    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) CndtnO Tm_S_R Dlt_Bt CnO:T_S_R CO:D_B T_S_R:
+CndtnOptmzd -0.683                                             
+Time_Snc_Rv -0.804  0.584                                      
+Delta_Beta  -0.760  0.520  0.618                               
+CndtO:T_S_R  0.567 -0.830 -0.704 -0.436                        
+CndtnOp:D_B  0.519 -0.760 -0.448 -0.685  0.637                 
+Tm_Sn_R:D_B  0.623 -0.453 -0.768 -0.822  0.541     0.596       
+CO:T_S_R:D_ -0.439  0.643  0.541  0.579 -0.768    -0.846 -0.704

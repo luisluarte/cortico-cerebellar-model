@@ -1,0 +1,37 @@
+ Family: beta  ( logit )
+Formula:          P_Switch ~ Condition * State * log_Delta_Beta + (1 | Subject)
+Data: long_df
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  -6001.9   -5941.4    3010.9   -6021.9      3111 
+
+Random effects:
+
+Conditional model:
+ Groups  Name        Variance Std.Dev.
+ Subject (Intercept) 0.05667  0.238   
+Number of obs: 3121, groups:  Subject, 50
+
+Dispersion parameter for beta family (): 0.625 
+
+Conditional model:
+                                                 Estimate Std. Error z value
+(Intercept)                                     -0.122877   0.070641  -1.740
+ConditionOptimized                               0.130438   0.129334   1.008
+StateReversal                                    0.054278   0.097260   0.558
+log_Delta_Beta                                  -0.072685   0.063961  -1.136
+ConditionOptimized:StateReversal                -0.090034   0.317406  -0.284
+ConditionOptimized:log_Delta_Beta                0.151415   0.093281   1.623
+StateReversal:log_Delta_Beta                     0.008331   0.087709   0.095
+ConditionOptimized:StateReversal:log_Delta_Beta -0.325738   0.215061  -1.515
+                                                Pr(>|z|)  
+(Intercept)                                        0.082 .
+ConditionOptimized                                 0.313  
+StateReversal                                      0.577  
+log_Delta_Beta                                     0.256  
+ConditionOptimized:StateReversal                   0.777  
+ConditionOptimized:log_Delta_Beta                  0.105  
+StateReversal:log_Delta_Beta                       0.924  
+ConditionOptimized:StateReversal:log_Delta_Beta    0.130  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1

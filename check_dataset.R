@@ -1,0 +1,6 @@
+t <- readRDS('src/r/distillation_targets_v2.rds')
+dA <- readRDS('data/dataset_A.rds')
+dD <- readRDS('data/dataset_D.rds')
+cat('Targets length:', length(t$subjs), '\n')
+cat('dA length:', nrow(dA), '\n')
+cat('dD length:', nrow(dD), '\n')

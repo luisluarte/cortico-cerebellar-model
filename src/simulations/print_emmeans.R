@@ -1,0 +1,6 @@
+library(brms)
+library(emmeans)
+fit <- readRDS("results/brms_switch_model.rds")
+q_logs <- quantile(fit$data$log_Delta_Beta, probs = c(0.25, 0.5, 0.75))
+emm <- emmeans(fit, ~ Condition | State * log_Delta_Beta, at = list(log_Delta_Beta = q_logs), epred = TRUE)
+print(emm)

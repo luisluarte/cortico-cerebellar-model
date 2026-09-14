@@ -1,0 +1,8 @@
+Wilcoxon Paired Test for Average Reversal Hazard Rate (Optimized vs Lesioned):
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  hazard_df$Hazard[hazard_df$Condition == "Optimized"] and hazard_df$Hazard[hazard_df$Condition == "Lesioned"]
+V = 131, p-value = 0.8967
+alternative hypothesis: true location shift is not equal to 0
+

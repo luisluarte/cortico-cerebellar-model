@@ -1,0 +1,39 @@
+ Family: beta 
+  Links: mu = logit 
+Formula: P_Calibrated ~ Condition * State * log_Delta_Beta + (1 | Subject) 
+   Data: long_df (Number of observations: 3144) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Multilevel Hyperparameters:
+~Subject (Number of levels: 50) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.45      0.06     0.36     0.58 1.00     1026     1356
+
+Regression Coefficients:
+                                                Estimate Est.Error l-95% CI
+Intercept                                          -0.66      0.10    -0.87
+ConditionOptimized                                  0.33      0.14     0.07
+StateReversal                                       0.11      0.10    -0.09
+log_Delta_Beta                                     -0.28      0.09    -0.47
+ConditionOptimized:StateReversal                    0.06      0.33    -0.59
+ConditionOptimized:log_Delta_Beta                   0.36      0.10     0.17
+StateReversal:log_Delta_Beta                        0.08      0.09    -0.10
+ConditionOptimized:StateReversal:log_Delta_Beta    -0.02      0.22    -0.46
+                                                u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept                                          -0.45 1.00     1668     2209
+ConditionOptimized                                  0.60 1.00     3221     2868
+StateReversal                                       0.29 1.00     3713     2966
+log_Delta_Beta                                     -0.10 1.00     1181     1891
+ConditionOptimized:StateReversal                    0.71 1.00     3133     3033
+ConditionOptimized:log_Delta_Beta                   0.55 1.00     3290     3002
+StateReversal:log_Delta_Beta                        0.26 1.00     3803     3128
+ConditionOptimized:StateReversal:log_Delta_Beta     0.41 1.00     2921     3013
+
+Further Distributional Parameters:
+    Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+phi     0.33      0.01     0.31     0.34 1.00     6372     2847
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).
