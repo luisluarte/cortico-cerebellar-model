@@ -77,12 +77,12 @@ theme_arxiv_physics <- function(base_size = 12, base_family = "") {
     )
 }
 
-
-# for font size
 scale_factor <- 3
 
 
 p1_data <- read_rds("../../results/rnn_results.rds")
+p2_data <- read_rds("../../results/landscape_data_remote.rds") %>%
+  as_tibble()
 
 p1 <- p1_data %>%
   pivot_longer(
@@ -95,14 +95,58 @@ p1 <- p1_data %>%
   geom_boxplot(outlier.shape = NA) +
   geom_point(shape = 21, size = 5) +
   theme_arxiv_physics() +
+  theme(
+    text = element_text(size = scale_factor * 6)
+  ) +
   ylab("") +
-  xlab("")
+  xlab("") +
+  scale_y_continuous(limits = c(0, 1))
 p1
+
+p2 <- p2_data %>%
+  pivot_longer(
+    cols = c("empirical_nll", "rnn_nll"),
+    names_to = "metrics",
+    values_to = "values"
+  ) %>%
+  ggplot(aes(
+    x = alpha_pc,
+    y = kappa_cf,
+    fill = values
+  )) +
+  geom_tile() +
+  scale_fill_viridis_c(
+    option = "magma",
+    name = "NLL"
+  ) +
+  scale_x_log10(
+    expand = c(0, 0),
+    breaks = scales::log_breaks(n = 5),
+    labels = scales::label_log()
+  ) +
+  scale_y_log10(
+    expand = c(0, 0),
+    breaks = scales::log_breaks(n = 5),
+    labels = scales::label_log()
+  ) +
+  facet_wrap(~metrics) +
+  theme_arxiv_physics()
+p2
 
 ggsave(
   plot = p1,
   "../../figures/rnn_performance_boxplot.pdf",
-  width = 20,
-  height = 20,
-  dpi = 600
+  width = 1000,
+  height = 1000,
+  unit = "px",
+  scale = 3
+)
+
+ggsave(
+  plot = p2,
+  "../../figures/landscape_raster.pdf",
+  width = 2200,
+  height = 1100,
+  unit = "px",
+  scale = 3
 )

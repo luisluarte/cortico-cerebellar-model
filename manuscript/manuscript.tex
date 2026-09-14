@@ -101,9 +101,11 @@
 
 	\subsection{Model parameter fit}
 	
-	\subsubsection{RNN oracle fit}
-	
 	\subsubsection{NSGA-II parameter discovery}
+	
+	We fitted an RNN to a sub-set of held-out data to generate the $RNN_{oracle}$ (see fig.\ref{fig:rnn_teacher_lnso})
+	
+	Then we extracted the $RNN_{oracle}$ predictions to provide a smoother optimization landscape to $Model_{student}$
 	
 	\subsubsection{Teacher-Student distillation}
 	
@@ -127,6 +129,20 @@
 	\subsection{Task description}
 	
 	\subsection{Figures}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.75\linewidth]{../figures/rnn_performance_boxplot.pdf}
+		\caption{\textbf{Predictive performance of the Teacher RNN across 5-fold LNSO cross-validation.}
+			Boxplots display the median and interquartile range (IQR) across validation folds; points represent individual fold scores ($N = 50$ participants, $10$ held-out per fold).
+			\textbf{Architecture:} A single-layer Gated Recurrent Unit (GRU, hidden size $H = 4$) evaluated on a $6$-dimensional input vector (boundary targets, lagged rewards, lagged choice, and lagged RT).
+			\textbf{Dual Heads:} (1) A policy head predicting choice switching probability using weighted binary cross-entropy. (2) A kinematic head predicting reaction times with a $2$-component shifted Log-Normal mixture, enforcing $\sigma_k > 0$ and non-decision time $\tau_k < \min(\mathrm{RT})$.
+			\textbf{Training:} Multi-task loss balanced via learned homoscedastic uncertainty parameters, optimized with Adam ($\eta = 0.002$) over $20$ epochs per fold.
+			\textbf{Out-of-Sample Metrics:} Mean $\mathrm{ROC}\text{-}\mathrm{AUC} = 0.795 \pm 0.037$, $\mathrm{PR}\text{-}\mathrm{AUC} = 0.537 \pm 0.078$, $\mathrm{CRPS} = 0.383 \pm 0.079\,\mathrm{s}$ ($M = 200$ Monte Carlo samples), and accuracy $= 0.739 \pm 0.054$.}
+		\label{fig:rnn_teacher_lnso}
+	\end{figure}
+	
+	
 	
 	\printbibliography
 
