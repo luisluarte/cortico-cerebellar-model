@@ -78,6 +78,10 @@ theme_arxiv_physics <- function(base_size = 12, base_family = "") {
 }
 
 
+# for font size
+scale_factor <- 3
+
+
 p1_data <- read_rds("../../results/rnn_results.rds")
 
 p1 <- p1_data %>%
@@ -98,7 +102,7 @@ p1
 ggsave(
   plot = p1,
   "../../figures/rnn_performance_boxplot.pdf",
-  width = 7,
-  height = 5,
+  width = 20,
+  height = 20,
   dpi = 600
 )
