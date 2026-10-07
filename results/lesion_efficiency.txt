@@ -1,0 +1,11 @@
+=== LESION ANALYSIS: CORTICAL READOUT EFFICIENCY ===
+   Variable    Condition Mean_Efficiency
+     Action       Intact     0.002341807
+     Action Lesion_Kappa     0.002424079
+     Action  Lesion_Thal     0.001325602
+      Value       Intact     0.012565629
+      Value Lesion_Kappa     0.020594736
+      Value  Lesion_Thal     0.005593346
+ Volatility       Intact     0.015766124
+ Volatility Lesion_Kappa     0.027387485
+ Volatility  Lesion_Thal     0.010939948

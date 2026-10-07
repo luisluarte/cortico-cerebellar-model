@@ -25,6 +25,8 @@ List simulate_bio_probes(int N_trials, arma::mat X, arma::vec ITI,
     arma::mat Z_history(N_trials, active_gran, arma::fill::zeros);
     arma::mat P_history(N_trials, active_gran, arma::fill::zeros);
     arma::mat D_history(N_trials, active_dcn, arma::fill::zeros);
+    arma::mat eps_history(N_trials, X.n_cols, arma::fill::zeros);
+    arma::mat W_purk_history(N_trials, active_gran, arma::fill::zeros);
     
     // Pruned projection matrices
     arma::mat sub_W_ach1 = W_ach1.rows(0, active_gran - 1);
@@ -45,12 +47,12 @@ List simulate_bio_probes(int N_trials, arma::mat X, arma::vec ITI,
         mu = arma::clamp(mu, -50.0, 50.0); // Prevent infinity
         
         arma::vec G = sub_W_ach1 * mu;
-        Z = (1.0 - p_beta_gran) * Z + p_alpha_gran * G;
-        double eps_mag = arma::mean(arma::abs(eps));
-        W_purk = W_purk - p_kappa_cf * (eps_mag * Z);
+        Z = (1.0 - p_beta_gran) * Z + p_alpha_gran * G;n        Z = arma::clamp(Z, -50.0, 50.0);
+        arma::vec CF_error = sub_W_ach2.t() * sub_W_thal.t() * W_gen.t() * eps;
+        W_purk = W_purk + (p_kappa_cf * 0.01) * (CF_error % Z);
         W_purk = arma::clamp(W_purk, -50.0, 50.0); // Prevent infinity
         
-        arma::vec P = G % W_purk;
+        arma::vec P = G % W_purk;n        P = arma::clamp(P, -50.0, 50.0);
         D = sub_W_ach2 * P;
         D = arma::clamp(D, -50.0, 50.0);
         
@@ -58,10 +60,14 @@ List simulate_bio_probes(int N_trials, arma::mat X, arma::vec ITI,
         Z_history.row(t) = Z.t();
         P_history.row(t) = P.t();
         D_history.row(t) = D.t();
+        eps_history.row(t) = eps.t();
+        W_purk_history.row(t) = W_purk.t();
     }
     
     return List::create(Named("mu") = mu_history,
                         Named("Z") = Z_history,
                         Named("P") = P_history,
-                        Named("D") = D_history);
+                        Named("D") = D_history,
+                        Named("eps") = eps_history,
+                        Named("W_purk") = W_purk_history);
 }

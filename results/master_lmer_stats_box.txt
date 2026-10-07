@@ -1,0 +1,216 @@
+=== LMER STATISTICS REPORT (per-participant repeated measures) ===
+
+--- PANEL A: Granger Causality F-statistics ---
+
+Variable: Value 
+                   Estimate Std. Error  t value
+(Intercept)        3.223579   1.273455 2.531365
+DirectionCb -> Ctx 4.696557   1.653544 2.840299
+EMMeans:
+ contrast                  estimate   SE df t.ratio p.value
+ (Ctx -> Cb) - (Cb -> Ctx)     -4.7 1.65 49  -2.840  0.0065
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: State 
+                   Estimate Std. Error  t value
+(Intercept)        3.349191  0.9112102 3.675541
+DirectionCb -> Ctx 3.203173  1.2409635 2.581198
+EMMeans:
+ contrast                  estimate   SE df t.ratio p.value
+ (Ctx -> Cb) - (Cb -> Ctx)     -3.2 1.24 49  -2.581  0.0129
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: Volatility 
+                   Estimate Std. Error  t value
+(Intercept)        6.732872   2.323986 2.897123
+DirectionCb -> Ctx 9.695002   2.322729 4.173970
+EMMeans:
+ contrast                  estimate   SE df t.ratio p.value
+ (Ctx -> Cb) - (Cb -> Ctx)     -9.7 2.32 49  -4.174  0.0001
+
+Degrees-of-freedom method: kenward-roger 
+
+--- PANEL B: Stabilized Readout Efficiency (Cortex vs Cerebellum) ---
+
+Variable: Value 
+             Estimate Std. Error  t value
+(Intercept)  1.488539  0.1534769 9.698782
+RegionCortex 1.728140  0.1814378 9.524698
+EMMeans:
+ contrast            estimate    SE df t.ratio p.value
+ Cerebellum - Cortex    -1.73 0.181 49  -9.525 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: State 
+              Estimate Std. Error  t value
+(Intercept)  1.0057105  0.1167083 8.617302
+RegionCortex 0.8901586  0.1401008 6.353699
+EMMeans:
+ contrast            estimate   SE df t.ratio p.value
+ Cerebellum - Cortex    -0.89 0.14 49  -6.354 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: Volatility 
+             Estimate Std. Error  t value
+(Intercept)  1.445572  0.1808109 7.994940
+RegionCortex 1.407201  0.2369768 5.938139
+EMMeans:
+ contrast            estimate    SE df t.ratio p.value
+ Cerebellum - Cortex    -1.41 0.237 49  -5.938 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+
+
+--- PANEL C: Raw Latent Encoding Capacity (Cortex vs Whole Cerebellum) ---
+
+Variable: Value 
+                Estimate Std. Error   t value
+(Intercept)   0.71601695 0.02614917 27.382019
+RegionCortex -0.02378742 0.02005035 -1.186384
+EMMeans:
+ contrast            estimate     SE df t.ratio p.value
+ Cerebellum - Cortex   0.0238 0.0201 49   1.186  0.2412
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: State 
+               Estimate Std. Error   t value
+(Intercept)   0.5111254 0.02640974 19.353670
+RegionCortex -0.1009990 0.02298385 -4.394347
+EMMeans:
+ contrast            estimate    SE df t.ratio p.value
+ Cerebellum - Cortex    0.101 0.023 49   4.394 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+
+Variable: Volatility 
+                 Estimate Std. Error    t value
+(Intercept)   0.623822661 0.03967318 15.7240407
+RegionCortex -0.007540836 0.02545901 -0.2961952
+EMMeans:
+ contrast            estimate     SE df t.ratio p.value
+ Cerebellum - Cortex  0.00754 0.0255 49   0.296  0.7683
+
+Degrees-of-freedom method: kenward-roger 
+
+
+--- PANEL D: Cortical Lesions ---
+
+Variable: Value 
+                        Estimate Std. Error    t value
+(Intercept)           0.08388557  0.1866560  0.4494126
+ConditionLesion_Kappa 2.79445010  0.2499698 11.1791496
+ConditionIntact       3.13279322  0.2499698 12.5326854
+EMMeans:
+ contrast                   estimate   SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa   -2.794 0.25 98 -11.179 <0.0001
+ Lesion_Thal - Intact         -3.133 0.25 98 -12.533 <0.0001
+ Lesion_Kappa - Intact        -0.338 0.25 98  -1.354  0.3693
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: State 
+                        Estimate Std. Error   t value
+(Intercept)           0.04542366  0.1324981  0.342825
+ConditionLesion_Kappa 1.58888138  0.1739191  9.135750
+ConditionIntact       1.85044544  0.1739191 10.639691
+EMMeans:
+ contrast                   estimate    SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa   -1.589 0.174 98  -9.136 <0.0001
+ Lesion_Thal - Intact         -1.850 0.174 98 -10.640 <0.0001
+ Lesion_Kappa - Intact        -0.262 0.174 98  -1.504  0.2935
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: Volatility 
+                        Estimate Std. Error    t value
+(Intercept)           0.03396723  0.2009639  0.1690215
+ConditionLesion_Kappa 2.74984768  0.2692858 10.2116312
+ConditionIntact       2.81880627  0.2692858 10.4677107
+EMMeans:
+ contrast                   estimate    SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa   -2.750 0.269 98 -10.212 <0.0001
+ Lesion_Thal - Intact         -2.819 0.269 98 -10.468 <0.0001
+ Lesion_Kappa - Intact        -0.069 0.269 98  -0.256  0.9645
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: Action 
+                        Estimate Std. Error  t value
+(Intercept)           0.04952592 0.04626354 1.070517
+ConditionLesion_Kappa 0.17933945 0.05694071 3.149582
+ConditionIntact       0.18630075 0.05694071 3.271837
+EMMeans:
+ contrast                   estimate     SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa -0.17934 0.0569 98  -3.150  0.0061
+ Lesion_Thal - Intact       -0.18630 0.0569 98  -3.272  0.0042
+ Lesion_Kappa - Intact      -0.00696 0.0569 98  -0.122  0.9918
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+
+--- PANEL E: Cerebellar Lesions ---
+
+Variable: Value 
+                        Estimate Std. Error   t value
+(Intercept)            0.6748454 0.05366664 12.574764
+ConditionLesion_Kappa -0.6748454 0.07147186 -9.442113
+ConditionIntact        0.8136934 0.07147186 11.384807
+EMMeans:
+ contrast                   estimate     SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa    0.675 0.0715 98   9.442 <0.0001
+ Lesion_Thal - Intact         -0.814 0.0715 98 -11.385 <0.0001
+ Lesion_Kappa - Intact        -1.489 0.0715 98 -20.827 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: State 
+                        Estimate Std. Error   t value
+(Intercept)            0.5343942 0.04151823 12.871314
+ConditionLesion_Kappa -0.5343942 0.05675039 -9.416573
+ConditionIntact        0.4713164 0.05675039  8.305077
+EMMeans:
+ contrast                   estimate     SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa    0.534 0.0568 98   9.417 <0.0001
+ Lesion_Thal - Intact         -0.471 0.0568 98  -8.305 <0.0001
+ Lesion_Kappa - Intact        -1.006 0.0568 98 -17.722 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: Volatility 
+                        Estimate Std. Error   t value
+(Intercept)            0.7855658 0.06827800 11.505401
+ConditionLesion_Kappa -0.7855658 0.09091837 -8.640342
+ConditionIntact        0.6600066 0.09091837  7.259332
+EMMeans:
+ contrast                   estimate     SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa    0.786 0.0909 98   8.640 <0.0001
+ Lesion_Thal - Intact         -0.660 0.0909 98  -7.259 <0.0001
+ Lesion_Kappa - Intact        -1.446 0.0909 98 -15.900 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 
+
+Variable: Action 
+                         Estimate Std. Error   t value
+(Intercept)            0.06451917 0.01849743  3.488008
+ConditionLesion_Kappa -0.06451917 0.02306072 -2.797795
+ConditionIntact        0.12243341 0.02306072  5.309176
+EMMeans:
+ contrast                   estimate     SE df t.ratio p.value
+ Lesion_Thal - Lesion_Kappa   0.0645 0.0231 98   2.798  0.0169
+ Lesion_Thal - Intact        -0.1224 0.0231 98  -5.309 <0.0001
+ Lesion_Kappa - Intact       -0.1870 0.0231 98  -8.107 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 3 estimates 

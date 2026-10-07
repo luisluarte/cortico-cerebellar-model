@@ -1,0 +1,71 @@
+Robust linear mixed model fit by DAStau 
+Formula: Total_Diff_Entropy ~ Ablation_Pct_F + (1 + Ablation_Pct_N | Subject) 
+   Data: df 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-10.0587  -0.4168  -0.1118   0.3870  10.5081 
+
+Random effects:
+ Groups   Name           Variance Std.Dev. Corr 
+ Subject  (Intercept)    0.09068  0.3011        
+          Ablation_Pct_N 0.03104  0.1762   -1.00
+ Residual                0.06023  0.2454        
+Number of obs: 550, groups: Subject, 50
+
+Fixed effects:
+                   Estimate Std. Error t value
+(Intercept)       -5.984312   0.055963 -106.93
+Ablation_Pct_F10   0.001025   0.050404    0.02
+Ablation_Pct_F20   0.039427   0.050593    0.78
+Ablation_Pct_F30  -0.026535   0.050908   -0.52
+Ablation_Pct_F40  -0.067556   0.051345   -1.32
+Ablation_Pct_F50  -0.107693   0.051901   -2.07
+Ablation_Pct_F60  -0.074434   0.052573   -1.42
+Ablation_Pct_F70  -0.069326   0.053357   -1.30
+Ablation_Pct_F80  -0.122732   0.054247   -2.26
+Ablation_Pct_F90  -0.141485   0.055238   -2.56
+Ablation_Pct_F100  2.182570   0.056325   38.75
+  note: Satterthwaite df skipped: problem size 66,000 exceeds the 5,000 auto cutoff; showing t-values without p-values. Request it with summary(object, df = "satterthwaite"), or raise options(robustlmm.summary.df.max). 
+
+Correlation of Fixed Effects:
+            (Intr) Ab_P_F10 A_P_F2 A_P_F3 A_P_F4 A_P_F5 A_P_F6 A_P_F7 A_P_F8
+Abltn_P_F10 -0.488                                                          
+Abltn_P_F20 -0.525  0.502                                                   
+Abltn_P_F30 -0.560  0.501    0.507                                          
+Abltn_P_F40 -0.593  0.499    0.507  0.514                                   
+Abltn_P_F50 -0.624  0.497    0.507  0.516  0.523                            
+Abltn_P_F60 -0.653  0.493    0.505  0.516  0.526  0.535                     
+Abltn_P_F70 -0.680  0.488    0.502  0.516  0.528  0.538  0.547              
+Abltn_P_F80 -0.705  0.482    0.499  0.514  0.528  0.541  0.552  0.561       
+Abltn_P_F90 -0.728  0.476    0.495  0.512  0.528  0.542  0.555  0.566  0.576
+Ablt_P_F100 -0.748  0.469    0.489  0.509  0.526  0.543  0.557  0.570  0.582
+            A_P_F9
+Abltn_P_F10       
+Abltn_P_F20       
+Abltn_P_F30       
+Abltn_P_F40       
+Abltn_P_F50       
+Abltn_P_F60       
+Abltn_P_F70       
+Abltn_P_F80       
+Abltn_P_F90       
+Ablt_P_F100  0.592
+
+Robustness weights for the residuals: 
+ 417 weights are ~= 1. The remaining 133 ones are summarized as
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.128   0.312   0.544   0.565   0.825   0.998 
+
+Robustness weights for the random effects: 
+ 98 weights are ~= 1. The remaining 2 ones are
+   55    56 
+0.686 0.686 
+
+Rho functions used for fitting:
+  Residuals:
+    eff: smoothed Huber (k = 1.345, s = 10) 
+    sig: smoothed Huber, Proposal 2 (k = 1.345, s = 10) 
+  Random Effects, variance component 1 (Subject):
+    eff: smoothed Huber (k = 5.14, s = 10) 
+    vcp: smoothed Huber (k = 5.14, s = 10) 

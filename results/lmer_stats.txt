@@ -1,0 +1,63 @@
+Type III Analysis of Variance Table with Satterthwaite's method
+               Sum Sq Mean Sq NumDF  DenDF F value    Pr(>F)    
+Ablation_Pct_F 167.32  16.732    10 288.57   68.52 < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: Total_Diff_Entropy ~ Ablation_Pct_F + (1 + Ablation_Pct_N | Subject)
+   Data: df
+Control: lmerControl(optimizer = "bobyqa")
+
+REML criterion at convergence: 895.7
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.9720 -0.4147 -0.1824  0.3184  4.0328 
+
+Random effects:
+ Groups   Name           Variance Std.Dev. Corr  
+ Subject  (Intercept)    0.1093   0.3306         
+          Ablation_Pct_N 0.1478   0.3845   -0.75 
+ Residual                0.2442   0.4942         
+Number of obs: 550, groups:  Subject, 50
+
+Fixed effects:
+                   Estimate Std. Error        df t value Pr(>|t|)    
+(Intercept)        -5.81373    0.08408 160.94726 -69.147  < 2e-16 ***
+Ablation_Pct_F10   -0.07519    0.09898 447.50187  -0.760  0.44786    
+Ablation_Pct_F20   -0.06779    0.09943 464.64996  -0.682  0.49570    
+Ablation_Pct_F30   -0.05581    0.10017 483.90985  -0.557  0.57765    
+Ablation_Pct_F40   -0.19071    0.10120 488.68494  -1.885  0.06008 .  
+Ablation_Pct_F50   -0.25779    0.10250 460.45428  -2.515  0.01224 *  
+Ablation_Pct_F60   -0.21569    0.10408 396.35541  -2.072  0.03888 *  
+Ablation_Pct_F70   -0.17583    0.10591 315.48611  -1.660  0.09787 .  
+Ablation_Pct_F80   -0.26935    0.10798 240.15977  -2.494  0.01329 *  
+Ablation_Pct_F90   -0.29834    0.11028 180.64254  -2.705  0.00748 ** 
+Ablation_Pct_F100   1.78327    0.11280 137.10997  15.809  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) Ab_P_F10 A_P_F2 A_P_F3 A_P_F4 A_P_F5 A_P_F6 A_P_F7 A_P_F8
+Abltn_P_F10 -0.610                                                          
+Abltn_P_F20 -0.630  0.502                                                   
+Abltn_P_F30 -0.647  0.502    0.508                                          
+Abltn_P_F40 -0.663  0.499    0.509  0.517                                   
+Abltn_P_F50 -0.677  0.496    0.508  0.519  0.528                            
+Abltn_P_F60 -0.688  0.491    0.506  0.520  0.531  0.541                     
+Abltn_P_F70 -0.698  0.486    0.503  0.519  0.533  0.545  0.556              
+Abltn_P_F80 -0.705  0.479    0.499  0.517  0.534  0.548  0.561  0.572       
+Abltn_P_F90 -0.711  0.472    0.494  0.514  0.533  0.550  0.565  0.578  0.589
+Ablt_P_F100 -0.715  0.464    0.488  0.511  0.531  0.550  0.567  0.582  0.595
+            A_P_F9
+Abltn_P_F10       
+Abltn_P_F20       
+Abltn_P_F30       
+Abltn_P_F40       
+Abltn_P_F50       
+Abltn_P_F60       
+Abltn_P_F70       
+Abltn_P_F80       
+Abltn_P_F90       
+Ablt_P_F100  0.606

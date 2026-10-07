@@ -1,0 +1,44 @@
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Probability blocks in the data:
+
+0.15 0.25 0.75 0.85 
+3971 4007 4017 3954 
+Reward rates by Resp and prob:
+`summarise()` has regrouped the output.
+i Summaries were computed grouped by prob and Resp.
+i Output is grouped by prob.
+i Use `summarise(.groups = "drop_last")` to silence this message.
+i Use `summarise(.by = c(prob, Resp))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.
+# A tibble: 8 x 3
+# Groups:   prob [4]
+   prob  Resp mean_reward
+  <dbl> <int>       <dbl>
+1  0.15     1       0.153
+2  0.15     2       0.848
+3  0.25     1       0.251
+4  0.25     2       0.741
+5  0.75     1       0.744
+6  0.75     2       0.251
+7  0.85     1       0.847
+8  0.85     2       0.147
+# A tibble: 4 x 7
+   prob    RT  se_RT State_Bias se_State Value_Reward se_Value
+  <dbl> <dbl>  <dbl>      <dbl>    <dbl>        <dbl>    <dbl>
+1  0.15 0.941 0.0461      0.516   0.0233        0.681  0.0105 
+2  0.25 0.876 0.0348      0.378   0.0256        0.589  0.00951
+3  0.75 0.914 0.0383     -0.378   0.0241        0.590  0.00996
+4  0.85 0.902 0.0373     -0.504   0.0225        0.674  0.00969
+Warning message:
+Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+i Please use `linewidth` instead. 

@@ -1,0 +1,14 @@
+ contrast                            estimate     SE  df t.ratio p.value
+ Ablation_Pct_F10 - Ablation_Pct_F0   -0.0752 0.0990 448  -0.760  0.9844
+ Ablation_Pct_F20 - Ablation_Pct_F0   -0.0678 0.0994 465  -0.682  0.9928
+ Ablation_Pct_F30 - Ablation_Pct_F0   -0.0558 0.1000 484  -0.557  0.9985
+ Ablation_Pct_F40 - Ablation_Pct_F0   -0.1907 0.1010 489  -1.885  0.3197
+ Ablation_Pct_F50 - Ablation_Pct_F0   -0.2578 0.1030 460  -2.515  0.0836
+ Ablation_Pct_F60 - Ablation_Pct_F0   -0.2157 0.1040 396  -2.072  0.2248
+ Ablation_Pct_F70 - Ablation_Pct_F0   -0.1758 0.1060 315  -1.660  0.4640
+ Ablation_Pct_F80 - Ablation_Pct_F0   -0.2693 0.1080 240  -2.494  0.0896
+ Ablation_Pct_F90 - Ablation_Pct_F0   -0.2983 0.1100 181  -2.705  0.0537
+ Ablation_Pct_F100 - Ablation_Pct_F0   1.7833 0.1130 137  15.809 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: mvt method for 10 tests 

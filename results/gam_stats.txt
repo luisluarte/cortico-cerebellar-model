@@ -1,0 +1,47 @@
+=== GAM LOSE-SHIFT ===
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+Lose_Shift ~ s(Ablation_Pct, k = 5) + s(Subject, bs = "re")
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.038756   0.003263   11.88   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Approximate significance of smooth terms:
+                    edf Ref.df       F p-value    
+s(Ablation_Pct) 3.97523      4 171.458  <2e-16 ***
+s(Subject)      0.06945     49   0.001   0.474    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+R-sq.(adj) =  0.554   Deviance explained = 55.7%
+-REML = -616.62  Scale est. = 0.0058474  n = 550
+
+=== GAM STRATEGY RATIO ===
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+Log_Ratio ~ s(Ablation_Pct, k = 5) + s(Subject, bs = "re")
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   7.3993     0.1992   37.15   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Approximate significance of smooth terms:
+                   edf Ref.df      F p-value    
+s(Ablation_Pct)  3.928  3.997 55.275  <2e-16 ***
+s(Subject)      36.926 49.000  3.058  <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+R-sq.(adj) =    0.4   Deviance explained = 44.5%
+-REML = 1285.7  Scale est. = 5.3755    n = 550

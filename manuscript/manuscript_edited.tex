@@ -1,0 +1,282 @@
+﻿% !TeX program = txs:///latexmk
+% !TeX TXS-program:compile = txs:///latexmk
+
+%!TeX TXS-program:clean = latexmk.exe -c %
+%!TeX TXS-program:quick = txs:///compile | txs:///biber | txs:///compile | txs:///view | txs:///clean
+%!TeX TXS-program:bibliography = txs:///biber
+%!BIB program = biber
+\documentclass[12pt, a4paper]{extarticle}
+
+% Essential Math and Symbol Packages
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[style=apa,backend=biber]{biblatex}
+\setlength{\parindent}{0pt}
+\usepackage{setspace}
+\usepackage{hyperref}
+\onehalfspacing
+\addbibresource{references.bib}
+
+% Theorem Environments Setup
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\title{A Cortico-Cerebellar model}
+\author{Luis Luarte}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    aki el abtract
+\end{abstract}
+	
+		\section{Introduction}
+	
+	In classical conditioning, cerebellar lesions spare delay conditioning (where cue and reward overlap, $\tau = 0$) but abolish trace conditioning (where a temporal gap requires bridging, $\tau > 0$) \parencite{kalmbach2009interactions}. Navigating these temporal gaps requires delayed credit assignment, tha is, the ability to correctly attribute a present reward or error to past actions and states \parencite{suttonReinforcementLearningIntroduction2018}. Environments that demand this historical tracking are termed non-Markovian as the immediate observation does not contain all the information needed to solve the task. Functional neuroimaging demonstrates coupling between the Deep Cerebellar Nuclei (DCN) and the prefrontal cortex during executive working memory paradigms that require the maintenance of hidden cognitive states across these non-Markovian delays \parencite{habasDistinctCerebellarContributions2009, bucknerOrganizationHumanCerebellum2011}. Optogenetic silencing of cerebellar projections to the ventromedial thalamus spares simple cue-guided mapping but diminishes delayed-response performance \parencite{gaoCorticocerebellarLoopMotor2018}, while inactivation of cerebellar output nodes induces perseveration by preventing the evaluation of historical action trajectories \parencite{verpeutCerebellarContributionsBrainwide2023}. Thus, cerebello-thalamo-cortical loops are required for bridging non-Markovian temporal delays.
+	
+	Despite these empirical findings, computational cerebellar modeling often reveals a structural constraint to Markovian regimes. Early adaptive filter models conceptualized the cerebellum as a bank of temporal basis functions. Because this architecture is purely feedforward, the cerebellar output cannot perturb future cortical states; the processed temporal history is never returned, forcing the cortex to act on instantaneous observations \parencite{fujitaAdaptiveFilterModel1982}. Subsequent modular architectures, such as the modular selection and identification for control (MOSAIC) framework, employed paired controllers for predictive sensorimotor tracking \parencite{harunoMosaicModelSensorimotor2001, mehtaForwardModelsVisuomotor2002}. Yet, module selection relies on a responsibility signal evaluated instantaneously against the current observation. Because this posterior is computed using only the immediate context, MOSAIC cannot bridge stimulus-free non-Markovian gaps. Large-scale spiking networks and cerebellar reservoir computing have demonstrated how the Granule-Golgi recurrent network generates a fading memory \parencite{hoangPredictiveRewardpredictionErrors2025, yamazakiCerebellumLiquidState2007}. These modern architectures integrate climbing fibers as reward-prediction errors \parencite{jinRewarddrivenCerebellarClimbing2024} and utilize localized eligibility traces to resolve delayed credit assignment \parencite{verduzco-floresHowCreditAssignment2015, doyaWhatAreComputations1999}. However, their readouts remain open-loop projections used exclusively to compute terminal action values. Because the cerebellar readout does not recursively perturb the driving cortical dynamics, the temporal memory remains isolated. This structural omission restricts these models to environments where the instantaneous sensory observation contains all necessary information for optimal action selection \parencite{kakeiConsensusPaperModels2026, miallStateEstimationCerebellum2008}.
+	
+	To solve this non-Markovian gap, we formalize a unified cortico-cerebellar model ($M_{cc}$) where each architectural component bridges temporal delays. Predictive coding generates continuous sensory prediction errors in real-time \parencite{fristonPredictiveCodingFreeenergy2009}, avoiding biologically implausible back-propagation-through-time. However, because these errors evaluate only the instantaneous present, the cortical space remains trapped in a Markovian regime. To escape this, we use reservoir computing principles to formalize the mechanism of the Granule layer \parencite{maassLiquidStateMachine2002, hauserTheoreticalFoundationMorphological2011}. This recurrent network acts as a physical fading memory, embedding instantaneous inputs with their temporal histories to transform Markovian-ambiguous states into unique, linearly separable population vectors. Yet, to successfully guide future behavior, this separated historical context must be returned to the cortex. Neuroanatomical tract-tracing in primates confirms that this occurs via the cerebello-thalamo-cortical pathway, where output from the DCN is routed through the ventrolateral thalamus back into the cerebral cortex \parencite{kelly2003, bostan2013}. However, compressing high-dimensional temporal information into the smaller DCN space risks geometric collapse (distinct historical states overlap and become indistinguishable).
+	
+	Guided by information theory and biologically-inspired intuitions, we resolved this by constraining $M_{cc}$ within an expansion-sparsity-compression triad. Biologically, the expanded Granule layer must ultimately converge into the smaller DCN. Information geometry dictates that preserving linear separability during such compression requires a specialized projection. If this compression were dense, converging signals would suffer signal cross-talk (where overlapping representations interfere with one another), averaging out the distinct historical traces. Therefore, the projection requires enforced sparsity \parencite{achlioptasDatabasefriendlyRandomProjections2003}. By imposing this sparse Achlioptas projection, the architecture guarantees that the topological distances achieved in the high-dimensional reservoir are compressed without cross-talk. This constraint ensures that non-Markovian contexts survive the expansion $\rightarrow$ sparsity $\rightarrow$ compression, and are accurately returned to the cortical space to resolve delayed credit assignment.
+	
+	To discover the optimal structural parameters for $M_{cc}$, we employed a Teacher-Student distillation pipeline \parencite{hinton2015distilling}. An unconstrained, task-optimized Recurrent Neural Network (RNN) served as the teacher, providing representational soft-targets to guide the learning of $M_{cc}$. We performed this distillation via evolutionary optimization using the Non-dominated Sorting Genetic Algorithm II (NSGA-II) across two competing fronts: (1) minimizing behavioral prediction error while (2) penalizing reliance on the RNN teacher's signal. This multi-objective search determined a Pareto front of optimal parameters where $M_{cc}$ operates autonomously.
+	
+	After identifying these biologically plausible structural parameters via distillation, we evaluated how well $M_{cc}$ could predict actual human choices. However, fitting complex continuous dynamical systems directly to noisy binary decision data presents a difficult optimization landscape filled with local minima and flat gradients \parencite{daw2006}. To solve this, we utilized the population-level optima from the NSGA-II to define informative empirical priors for a Markov Chain Monte Carlo (MCMC) sampler. The sampler leverages an adaptive random walk Metropolis algorithm that tunes both the covariance matrix \parencite{haario2001} and step-size \parencite{roberts2009} to ensure robust posterior convergence. Without these bounds, unconstrained Bayesian fitting often fails due to parameter non-identifiability. Using this informed Bayesian framework, $M_{cc}$ achieved lower out-of-sample loss than standard heuristic architectures, specifically Q-learning \parencite{watkinsQlearning1992} and Win-Stay-Lose-Shift (WSLS) \parencite{nowakWinStayLoseShiftStrategy1993}, during the hierarchical evaluation of individual participants across a non-Markovian reversal learning task. Finally, simulated ablations of the fitted $M_{cc}$ models revealed autonomous internal dynamics; $M_{cc}$ sustains hidden internal states during sensory deprivation (simulation for larger inter-trial intervals), and ablation of the cortico-thalamo-cerebellar feedback loop induces task perseveration, matching empirical deficit profiles.
+	
+\section{Results}
+
+\subsection{Multi-objective distillation of biological parameters}
+
+To establish a robust teacher for the distillation pipeline, the Recurrent Neural Network (RNN) teacher ($RNN_{teacher}$) was first evaluated using a 5-fold Leave-N-Subjects-Out (LNSO) cross-validation across the $N = 50$ participants. $RNN_{teacher}$ demonstrated modest out-of-sample predictive performance, achieving a mean ROC-AUC of $0.739$ ($SD = 0.116$), a mean PR-AUC of $0.508$ ($SD = 0.103$), and a mean accuracy of $73.20\%$ ($SD = 6.08\%$). To ensure probabilities were well-calibrated before computing the evaluation metric, we applied Platt scaling (logistic calibration; see \nameref{sec:methods}). Probabilistic calibration was then assessed via the Continuous Ranked Probability Score (CRPS) \parencite{gneiting2007strictly}, a strictly proper scoring rule where $0$ indicates perfect calibration and values scale linearly with the absolute error of the predicted probability. $RNN_{teacher}$ yielded a mean out-of-bag CRPS of $0.376$ ($SD = 0.072$). After validating its generalization capacity, $RNN_{teacher}$ was retrained on the complete dataset to serve as the continuous target for the student models, where it achieved a final in-bag accuracy of $76.18\%$.
+
+To establish the optimal topology of the cortico-cerebellar model ($M_{cc}$), we applied upper-bound constraints for two critical dimensions: (1) the number of granule cells (upper bound = $896$) and (2) deep cerebellar nuclei (DCN) cells (upper bound = $896$). The parameter space was searched using the NSGA-II multi-objective evolutionary algorithm (see \nameref{sec:methods}) across a 5-dimensional objective space to jointly account for performance in binary classification, reaction time (out-of-bag and in-bag performance), and overall network size over the $RNN_{teacher}$ targets in the teacher-student distillation. 
+
+To evaluate architectural performance independent of structural energy (the metabolic cost associated with maintaining neuronal connections), we projected the 5-dimensional solutions to a 4-dimensional performance space (Train BCE, Validation BCE, Train RT, Validation RT) and recomputed the Pareto non-dominated front. At full autonomy ($\gamma = 1.0$), $M_{cc}$ yielded a hypervolume of $\mu = 0.201$ ($95\%$ CI $[0.194, 0.208]$), compared to the Win-Stay-Lose-Shift (WSLS) heuristic ($\mu = 0.021$, $95\%$ CI $[0.020, 0.021]$, $p < .001$) and the Markovian Q-learning model ($\mu = 0.086$, $95\%$ CI $[0.083, 0.088]$, $p < .001$). Without explicit size optimization in this projected space, the structural topology over the 4D Pareto front converged to $37.5\%$ of the granule layer capacity ($\approx 336$ cells) and $18.4\%$ of the DCN layer capacity ($\approx 165$ cells), resolving the geometric hypervolumetric penalty incurred during the initial 5D search (see \nameref{sec:methods} for the hypervolumetric cost rationale).
+
+To quantify performance decay as the external teacher signal was withdrawn (decreasing autonomy $\gamma \rightarrow 0$), we modeled the 4D hypervolume across the autonomy spectrum ($\gamma \in [0.0, 1.0]$) using a bootstrapped log-linear regression ($\log(\text{HV}) \sim \gamma$). $M_{cc}$ yielded a decay rate of $\beta_{\text{log}} = -0.494$ ($95\%$ CI $[-0.504, -0.482]$), compared to the Q-learning model ($\beta_{\text{log}} = -1.279$, $95\%$ CI $[-1.290, -1.269]$, $p < .001$) and the WSLS heuristic ($\beta_{\text{log}} = -2.464$, $95\%$ CI $[-2.473, -2.452]$, $p < .001$). Scaling toward full student autonomy, $M_{cc}$ degraded at a rate $2.5\times$ to $5\times$ slower than the Markovian architectures.
+
+\subsection{Non-Markovian state maintenance via cortico-cerebellar feedback}
+
+\textit{Cortico-cerebellar feedback enables non-Markovian temporal integration.}
+While the distillation loss confirms the network's global alignment with $RNN_{teacher}$, we aimed to directly quantify the intrinsic temporal memory of $M_{cc}$. To provide evidence that does not rely on a teacher proxy, we evaluated $M_{cc}$ using a standard metric from Reservoir Computing: Memory Capacity (MC) \parencite{jaeger2002}. Memory Capacity directly quantifies a dynamical system's fading memory by measuring its capacity to linearly decode past events from its current instantaneous state. Specifically, we trained an L2-regularized Ridge regression readout on the current cortical state ($\boldsymbol{\mu}_t$) to predict the reward received $k$ trials in the past ($Reward_{t-k}$). We calculated the cross-validated $R^2$ for decoding each lag up to $k=15$ trials into the past. The Total Memory Capacity was defined as the sum of the variance explained across all temporal lags ($MC = \sum_{k=1}^{15} R^2$). To determine if this capacity was meaningful, we compared it against a null model using temporally permuted reward sequences, confirming the intact $M_{cc}$ significantly exceeded the chance baseline (see \nameref{sec:methods}).
+
+To isolate the causal role of the $M_{cc}$ cortico-cerebellar feedback loop, we subjected the optimal Intact baseline network ($\beta_{thal} = 0.75$) to a sequential synthetic ablation. We systematically degraded the thalamic feedback tract in 1\% increments, driving the network from 0\% (intact) to a 100\% complete lesion ($\beta_{thal} = 0$). At each of the ablation steps, we simulated the continuous network dynamics over 120 trials for all $N=50$ participants and computed the corresponding Memory Capacity.
+
+The Intact $M_{cc}$ exhibited significant non-Markovian temporal integration (Total MC = 0.809), successfully buffering the environmental history required to infer latent states. Interestingly, the sequential ablation revealed a structural dependency on the feedback loop. We evaluated the degradation trajectory using a linear mixed-effects model with ablation level as a continuous fixed effect and a random intercept for participants. The physical destruction of the cortico-cerebellar tract induced a massive, linear collapse in the memory capacity of $M_{cc}$ (Estimate = -1.327, $t(49) = -30.34, p < 0.0001$). At 90\% ablation, the network's temporal integration had severely degraded (Total MC = 0.281, $d = 2.05$ vs. Intact). At 100\% complete ablation, the memory capacity was ablated (Total MC = 0.065, $d = 2.89$ vs. Intact). This confirms that without the geometric expansion and subsequent recurrent injection provided by the cortico-cerebellar loop, the cortical space ($\boldsymbol{\mu}_t$) loses fading memory, structurally collapsing into a purely instantaneous Markovian reactor.
+
+\subsection{Geometric approximation of optimal Bayesian inference}
+
+\textit{Bayesian Leave-One-Out Cross-Validation (PSIS-LOO).} To evaluate out-of-sample generalization, models were fit independently per subject ($N=50$) over 10,000 MCMC iterations to a hold-out dataset. Performance was quantified using Pareto Smoothed Importance Sampling Leave-One-Out cross-validation (PSIS-LOO \parencite{vehtari2017practical}) to estimate the Expected Log Pointwise Predictive Density (ELPD), providing a robust measure of out-of-sample predictive accuracy without requiring explicit data splitting (see \nameref{sec:methods}). To ensure valid likelihood evaluations, baseline Markovian heuristics were bounded using a 5\% lapse-rate ceiling, a Student-t ($\nu=4$) distribution for reaction time residuals, logit bounds on inverse temperature ($\beta \le 10$), and L2 Ridge regularization ($\lambda=1.0$) on the linear readouts.
+
+\textit{Unconstrained Dynamics.} When fit with a flat standard normal prior ($\mathcal{N}(0,1)$), the unconstrained model (\texttt{bio\_unconst}) yielded a baseline ELPD of $1712.0$ ($SE = 4.5$, $\Delta\text{ELPD} = 0.0$, $p_{\text{loo}} = 0.67$). However, diagnostics showed 389 Pareto $k > 0.7$ warnings localized to three subjects. These warnings indicate that the posterior variance is too broad and the cross-validation approximation is statistically unreliable. This highlights that weakly informative priors are insufficient to bound the parameter space of $M_{cc}$, resulting in posterior sensitivity.
+
+\textit{Heuristic Baselines.} Under structural bounds ensuring valid LOO approximations (0 Pareto warnings), the Q-learning model (\texttt{q\_emp}, $\beta \le 10$) yielded an ELPD of $1200.4$ ($SE = 3.7$), corresponding to a $\Delta\text{ELPD}$ of $-511.6$ ($SE = 2.4$) from the unconstrained baseline and $p_{\text{loo}} = 0.63$. Constraining the inverse temperature to prevent overfitting to deterministic trial streaks resulted in the Q-learning model yielding a lower ELPD than the static Win-Stay-Lose-Shift heuristic (\texttt{w\_emp}), which achieved an ELPD of $1212.7$ ($SE = 5.2$, $\Delta\text{ELPD} = -499.3$, $SE = 2.5$, $p_{\text{loo}} = 0.18$, 0 warnings).
+
+\textit{Physiological Distillation.} When $M_{cc}$ was regularized using the distilled targets ($\boldsymbol{\mu}_{EB}$) extracted from Dataset A, cross-validation yielded 0 Pareto $k > 0.7$ warnings. The guided model (\texttt{bio\_anch}, prior $\sigma=e^{-0.5}$) produced an ELPD of $1548.6$ ($SE = 4.9$), yielding a $\Delta\text{ELPD} = -163.4$ ($SE = 0.6$) relative to the unconstrained baseline and $p_{\text{loo}} = 0.54$. Against the top-performing heuristic (WSLS), this guided configuration yielded a relative $\Delta\text{ELPD}$ of $335.9$ ($SE = 2.4$, $Z = 140.8$, $p < .001$). Furthermore, the strict zero-shot transfer configuration (\texttt{bio\_locked}, prior $\sigma=e^{-1.5}$) produced an ELPD of $1511.4$ ($SE = 5.0$, $\Delta\text{ELPD} = -200.6$, $SE = 0.9$, $p_{\text{loo}} = 0.34$, 0 warnings). Compared to WSLS, this transfer maintained a relative advantage of $\Delta\text{ELPD} = 298.7$ ($SE = 2.2$, $Z = 133.3$, $p < .001$), demonstrating that the constrained continuous dynamics generalize out-of-sample behavior.
+
+\subsection{Synthetic Thalamic ablation induced representation collapse and perserveration}
+
+\textit{Model Fitting and Generative Simulations.} To evaluate the latent dynamics of the cortico-cerebellar loop, the continuous-time recurrent architecture was fitted to empirical behavior across $N=50$ participants using hierarchical Bayesian inference. For each participant, generative simulations were driven using their respective posterior median parameter estimates. This allowed us to extract individual-level trajectories for the cortical space ($\boldsymbol{\mu}_t$) and cerebellar plasticity ($\mathbf{W}_{purk}$) and subject these traces to linear mixed-effects modeling (LMM) with a random intercept for participant. All pairwise contrasts report Kenward-Roger degrees of freedom and Tukey-adjusted $p$-values.
+
+\textit{Directional Flow of Information and Representation Stability.} We evaluated the directional flow of information between the cerebellum and cortex across the three relevant cognitive variables: Value (expected reward), State (inferred environmental context), and Volatility (environmental uncertainty), which were extracted from an optimal Bayesian observer (see \nameref{sec:methods}). LMM analysis applied to participant-level Granger causality $F$-statistics revealed significantly higher causal flow in the Cerebellum $\rightarrow$ Cortex direction compared to Cortex $\rightarrow$ Cerebellum for all latent variables (Value: $\Delta F = 4.70, t(49) = 2.84, p = 0.0065$; State: $\Delta F = 3.20, t(49) = 2.58, p = 0.0129$; Volatility: $\Delta F = 9.70, t(49) = 4.17, p < 0.0001$). 
+
+We then evaluated which region provided a more stable representation of these variables, defined as the linear decodability of the variable from the region's continuous state (using L2-regularized Ridge regression). We computed a stabilized readout efficiency, calculating the predictive power penalized by trajectory volatility. This volatility adjustment reflects the need for representations that are not only accurate but also resistant to transient noise. The Cortex demonstrated significantly higher stabilized readout efficiency than the Cerebellum across all cognitive variables (Value: $\Delta = 1.73, t(49) = 9.52, p < 0.0001$; State: $\Delta = 0.89, t(49) = 6.35, p < 0.0001$; Volatility: $\Delta = 1.41, t(49) = 5.94, p < 0.0001$), confirming its role as a temporal stabilizer, which is required to prevent rapid motor errors from overwriting long-term cognitive states.
+
+\textit{Shared Information and Raw Encoding Capacity.} Because the model architecture includes continuous feedback mechanisms, all layers ultimately share information. To verify this, we conducted an exhaustive statistical test of the raw, unpenalized encoding capacity (cross-validated $R^2$) before volatility adjustments. The Cerebellum matched or exceeded the Cortex in raw encoding capacity. For Value ($\Delta = 0.024, t(49) = 1.19, p = 0.241$) and Volatility ($\Delta = 0.008, t(49) = 0.30, p = 0.768$), capacity was statistically indistinguishable between regions. For State, the Cerebellum maintained a significantly higher raw encoding ($\Delta = 0.101, t(49) = 4.39, p < 0.0001$). 
+
+\textit{Synthetic Ablations and Action Encoding.} To isolate the structural encoding capabilities while marginalizing the feedback loops, synthetic lesions were applied to the thalamic cortico-cerebellar relay ($\text{Lesion}_{\text{Thal}}$) and the climbing fiber plasticity mechanism ($\text{Lesion}_{\kappa}$). We also evaluated the specific encoding of the actual decision taken by the participant (Action). In the intact $M_{cc}$, the encoding efficiency of Action was statistically equivalent across both the Cortex and Cerebellum ($\Delta = -0.049, t(49) = -1.08, p = 0.286$).
+
+Under synthetic ablation, the regions exhibited a structural double dissociation. In the Cortex, severing thalamic communication ($\text{Lesion}_{\text{Thal}}$) significantly degraded readout efficiency across all domains (Value: $\Delta = -3.13, p < 0.0001$; State: $\Delta = -1.85, p < 0.0001$; Volatility: $\Delta = -2.82, p < 0.0001$; Action: $\Delta = -0.186, p = 0.0042$). Conversely, disabling cerebellar plasticity ($\text{Lesion}_{\kappa}$) produced no statistically significant reduction in Cortical efficiency compared to the intact baseline (Value: $p = 0.369$; State: $p = 0.293$; Volatility: $p = 0.964$; Action: $p = 0.991$).
+
+In the Cerebellum, the structural dependency was inverted. Disabling plasticity ($\text{Lesion}_{\kappa}$) significantly collapsed cerebellar efficiency across all domains (Value: $\Delta = -1.49, p < 0.0001$; State: $\Delta = -1.01, p < 0.0001$; Volatility: $\Delta = -1.45, p < 0.0001$; Action: $\Delta = -0.187, p < 0.0001$). While $\text{Lesion}_{\text{Thal}}$ also significantly reduced Cerebellar efficiency due to the closed-loop degradation of the sensory prediction error (all $p < 0.0001$), this reduction was significantly less severe than the degradation caused directly by $\text{Lesion}_{\kappa}$ (Value: $\Delta = 0.675, p < 0.0001$; State: $\Delta = 0.534, p < 0.0001$; Volatility: $\Delta = 0.786, p < 0.0001$; Action: $\Delta = 0.064, p = 0.017$).
+
+\textit{Behavioral consequences of structural ablation.}
+After demonstrating differentiated encoding via our ablation analysis, we sought to determine the behavioral effects of these structural deficits using synthetic simulation. Clinical literature suggests that cerebellar perturbation may induce severe task perseverance \parencite{schmahmannDysmetriaThoughtClinical1998a}. In our paradigm, we operationalized this deficit as \textit{policy perseverance}, that is, the inability of the network to dynamically update its behavioral strategy in response to changing environmental contingencies, trapping the agent in a rigid, repetitive action space.
+
+To quantify policy perseverance, we modeled each participant's Win-Stay/Lose-Shift (WSLS) sequence as a draw from a Bayesian Beta posterior (see \nameref{sec:methods}). We computed the differential entropy of this distribution to capture the continuous probability density of their heuristic strategy, providing a principled measure of behavioral flexibility. Our analysis revealed that partial ablation (90\% destruction of thalamic gain) induced a severe structural descent into perseverance. The differential entropy of the network's policy dropped significantly compared to the intact baseline (Estimate = -0.298 nats, $t = -2.705, p = 0.007$), indicating $M_{cc}$ became trapped in a heuristic mechanism. 
+
+Interestingly, complete structural destruction (100\% ablation) shattered this perseverative trough entirely. Rather than becoming more rigid, the 100\% ablated network exhibited a massive, pathological increase in entropy (Estimate = +1.783 nats, $t = 15.809, p < 0.0001$), plunging $M_{cc}$ into a highly volatile and stochastic behavioral state.
+
+\textit{Trial-by-trial online readout reveals predictive deficits.}
+Thus, we wanted to determine if this increase in flexibility at total ablation, or the rigid behavior at 90\% ablation, reflected genuine behavioral flexibility or merely stochastic noise. We evaluated $M_{cc}$ using a biologically plausible trial-by-trial online readout. Unlike optimal offline linear regressions that have non-causal access to the entire sequence (`god-mode'' decoding), an online readout forces the network to adapt its policy weights trial-by-trial using a standard error-driven delta rule (see \nameref{sec:methods}). 
+
+When evaluated under this strict online paradigm, we determined a severe and significant decrease in predictive performance at the participant level. Both ablated conditions suffered interference, with the online Choice Negative Log-Likelihood (NLL; capturing the trial-by-trial predictive error as defined in \nameref{sec:methods}) significantly worsening (increasing) compared to the intact network (Intact vs. 90\% Ablation: $t(98) = -7.810, p < 0.0001, d = -1.58$; Intact vs. 100\% Ablation: $t(98) = -7.959, p < 0.0001, d = -1.61$).
+
+\textit{Degradation of internal state representations.}
+To determine the root cause of this drop in online predictive performance, we analyzed the internal representations of $M_{cc}$ across the levels of ablation. We quantified this using Readout Efficiency, defined as the cross-validated continuous $R^2$ normalized by the space's temporal volatility, capturing the capacity of $M_{cc}$ to maintain a stable, linearly separable encoding of the environment. 
+
+We found that the ablation drastically destroyed the internal encoding of the continuous sensory state ($X$). When evaluating the State Readout Efficiency using a linear mixed-effects model across all ablation levels, we found a severe collapse in the representational capacity of $M_{cc}$. The State Efficiency degraded substantially at 90\% ablation ($t(98) = 2.350, p = 0.0537, d = 0.47$) and was almost completely destroyed at 100\% total ablation ($t(98) = 3.911, p = 0.0005, d = 0.79$) compared to the intact baseline. This confirms that while a partially ablated network may superficially echo rigid heuristic choices, its internal computational geometry has collapsed into a low-dimensional trough, and a fully ablated network collapses entirely into volatile noise, representing an incapability of tracking environmental dynamics or supporting online learning.
+\section{Discussion}
+
+mui bonito el modlo uwu
+	
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Model specification}
+$M_{cc}$ is divided into two main components: (1) the Cortex, which acts as a generalized state-value learning algorithm and propagates prediction errors to (2) the Cerebellum, where an expansion-sparsity-compression triad modifies a temporal state representation that is injected back into the Cortex to guide subsequent predictions.
+
+The cortical space operates under Predictive Coding, where sensory prediction errors ($\boldsymbol{\epsilon}_t$) drive a local Markovian gradient descent on the latent state ($\boldsymbol{\mu}_t$). To escape the Markovian limitation, the state is projected via random projections. By scattering the low-dimensional cortical state into a vastly higher dimension, random projections decorrelate spatially overlapping inputs, ensuring that states exhibiting instantaneous Markovian ambiguity become uniquely separable once embedded in the temporal dynamics of the reservoir. For this expansion, we use sparse Achlioptas matrices \parencite{achlioptasDatabasefriendlyRandomProjections2003} ($\mathbf{W}_{\mathrm{ach1}}$). These matrices preserve metric distances despite extreme sparsity (e.g., 90\% zero weights), computationally mirroring the sparsity of the biological mossy fiber-granule cell pathway to separate the low-dimensional cortical state into a high-dimensional, linearly separable geometry (the Granule layer). 
+
+Inside this layer, Reservoir Computing principles govern the network dynamics, providing the fading memory necessary to buffer states across time. Within this expanded reservoir, Reinforcement Learning \parencite{suttonReinforcementLearningIntroduction2018} provides the temporal bridge: an eligibility trace ($\mathbf{Z}_t$) decays forward in time, capturing the delayed climbing fiber error via localized anti-Hebbian plasticity \parencite{itoCerebellarLongtermDepression2001}, a modeled biological mechanism where parallel fiber synapses weaken when their recent activation coincides with a subsequent error signal ($\Delta \mathbf{W} \propto |\bar{\epsilon}_t| \mathbf{Z}_t$). 
+
+Finally, the system utilizes geometric \textbf{Compression and Sparsity}. Geometric compression forces a high-dimensional space into a lower-dimensional bottleneck while preserving the pairwise topological distances between states, while sparsity minimizes energetic transmission costs by utilizing only a fraction of active nodes. A second Achlioptas projection bounds the network, preventing metric distortion as the updated historical trace is compressed back into the Deep Cerebellar Nuclei and continuously injected into the cortical space via the thalamus ($\beta_{\mathrm{thal}} \mathbf{D}_t$). This structural loop transforms the cortex from an instantaneous sensory filter into an iterative, non-Markovian sequence generator. By recursively injecting the decaying cerebellar trace ($\mathbf{Z}_t$) back into the primary cortical state update, $M_{cc}$ externalizes the temporal credit assignment problem, allowing the cortex to navigate delayed environments without maintaining an explicit memory of the past.
+
+Formally, the cortical space continuously generates a sensory prediction $\hat{\mathbf{I}}_t$ from its current latent state $\boldsymbol{\mu}_{t}$ using the generative matrix $\mathbf{W}_{gen}$:
+\begin{equation}
+	\hat{\mathbf{I}}_t = \mathbf{W}_{gen} \boldsymbol{\mu}_{t}\label{ctx_hallucination}
+\end{equation}
+
+The precision-weighted sensory prediction error $\boldsymbol{\epsilon}_{t}$ is computed as the difference between the true sensory input $\mathbf{I}_{t}$ and the prediction, scaled by the environmental precision matrix $\Pi$:
+\begin{equation}
+	\boldsymbol{\epsilon}_{t} = \Pi \odot (\mathbf{I}_{t} - \hat{\mathbf{I}}_{t})\label{ctx_pe}
+\end{equation}
+
+The low-dimensional cortical state is projected into the high-dimensional cerebellar granular layer $\mathbf{G}_{t}$ via the sparse Achlioptas matrix $\mathbf{W}_{ach1}$, decorrelating spatially overlapping states:
+\begin{equation}
+	\mathbf{G}_{t} = \mathbf{W}_{ach1} \boldsymbol{\mu}_{t}\label{gran}
+\end{equation}
+
+To solve the temporal credit assignment problem, an eligibility trace $\mathbf{Z}_{t}$ acts as a temporal bridge, accumulating the granular state over time with a decay rate $\beta_{gran}$ and an injection rate $\alpha_{gran}$:
+\begin{equation}
+	\mathbf{Z}_{t} = (1 - \beta_{gran}) \mathbf{Z}_{t-1} + \alpha_{gran} \mathbf{G}_{t}\label{et}
+\end{equation}
+
+A scalar global error signal $\left| \bar{\epsilon}_{t} \right|$ is extracted as the mean absolute prediction error across all $d$ dimensions, simulating the widespread climbing fiber broadcast:
+\begin{equation}
+	\left| \bar{\epsilon}_{t} \right| = \frac{1}{d} \sum_{i=1}^{d} \left| \boldsymbol{\epsilon}_{t, i} \right|\label{c_pe}
+\end{equation}
+
+The Purkinje cell weights $\mathbf{W}_{purk, t}$ undergo modeled anti-Hebbian plasticity. Synapses are weakened proportionally to the learning rate $\kappa$, the global error signal, and the physical eligibility trace:
+\begin{equation}
+	\mathbf{W}_{purk, t} = \mathbf{W}_{purk, t-1} - \kappa ( \left| \bar{\epsilon}_{t} \right| \mathbf{Z}_{t})\label{purk}
+\end{equation}
+
+The cerebellar output is geometrically compressed into the Deep Cerebellar Nuclei (DCN) representation $\mathbf{D}_{t}$ via a second sparse projection $\mathbf{W}_{ach2}$, integrating the granular state and Purkinje weights:
+\begin{equation}
+	\mathbf{D}_{t} = \mathbf{W}_{ach2} (\mathbf{G}_{t} \odot \mathbf{W}_{purk, t})\label{forward_pass}
+\end{equation}
+
+Finally, the cortical state is updated for the next trial. The update is driven by the Markovian gradient descent on the prediction error ($\mathbf{W}^{T}_{gen} \boldsymbol{\epsilon}_{t}$), a continuous-time leak parameterized by the inter-trial interval ($\lambda_{c} \cdot ITI_{t}$), and the non-Markovian thalamic feedback loop ($\beta_{thal} \mathbf{W}_{thal} \mathbf{D}_{t}$) which physically injects the buffered cerebellar memory back into the cortex:
+\begin{equation}
+	\boldsymbol{\mu}_{t+1} = \boldsymbol{\mu}_{t} + \alpha_{c} \left[(\mathbf{W}^{T}_{gen} \boldsymbol{\epsilon}_{t}) - (\lambda_{c} \cdot ITI_{t} \cdot \boldsymbol{\mu}_{t}) + \beta_{thal} (\mathbf{W}_{thal} \mathbf{D}_{t})\right]\label{thalam_ctx_pass}
+\end{equation}
+
+For empirical prediction, $M_{cc}$ utilizes an L2-regularized Ridge regression readout to map the cortical latent state $\boldsymbol{\mu}_t$ onto the observed behavioral variables (binary choice and continuous reaction time):
+\begin{equation}
+	P(\text{Choice}_t = 1 \mid \boldsymbol{\mu}_t) = \sigma(\mathbf{w}_{\text{choice}}^T \boldsymbol{\mu}_t)
+\end{equation}
+\begin{equation}
+	RT_t \sim \mathcal{N}(\mathbf{w}_{\text{rt}}^T \boldsymbol{\mu}_t, \sigma_{\text{rt}}^2)
+\end{equation}
+where $\sigma(\cdot)$ denotes the logistic sigmoid function, and $\mathbf{w}_{\text{choice}}$ and $\mathbf{w}_{\text{rt}}$ are the respective optimal linear readout weights.
+
+\subsection{Model parameter fit}
+
+\subsubsection{NSGA-II parameter discovery}
+Because $M_{cc}$ networks are considerably smaller than deep learning architectures, we penalized structural size using an $O(N^{2.5})$ hypervolumetric cost function. This non-linear penalty specifically accounts for the metabolic cost of wiring density, as the number of possible synaptic connections scales quadratically with neuron count. We employed the Non-dominated Sorting Genetic Algorithm II (NSGA-II) \parencite{deb2002fast} to optimize the structural parameters of $M_{cc}$ ($\Theta_{bio} = \{\alpha_c, \lambda_c, \beta_{thal}, \kappa, \alpha_{gran}, \beta_{gran}, \sigma_{diff}^2\}$). NSGA-II is a multi-objective evolutionary algorithm that generates a Pareto front by trading off two conflicting objectives:
+\begin{enumerate}
+	\item Minimizing the continuous state distillation loss against $RNN_{teacher}$.
+	\item Maximizing behavioral autonomy, defined as predicting human choices and reaction times directly from the data rather than exclusively mimicking the Teacher's logit distribution.
+\end{enumerate}
+The multi-objective formulation was parameterized by a dynamic blending hyperparameter $\gamma \in [0, 1]$, minimizing the joint objective:
+\begin{equation}
+	\min_{\Theta_{bio}} \left( (1-\gamma)\mathcal{L}_{Distill}(\boldsymbol{\mu}_t^{bio}, \boldsymbol{\mu}_t^{RNN}) + \gamma \mathcal{L}_{Emp}(\boldsymbol{\mu}_t^{bio}, \text{Choice}_t, RT_t) \right)
+\end{equation}
+
+\subsubsection{Teacher-Student distillation}
+To generate the distillation targets, we fitted a single-layer Gated Recurrent Unit (GRU, $H=4$) $RNN_{teacher}$ to a subset of held-out training data. $RNN_{teacher}$ processed 6-dimensional input vectors (boundary targets, lagged rewards, lagged choice, and lagged RT) and output dual predictions via a policy head (weighted BCE) and a kinematic head (2-component shifted Log-Normal mixture). To ensure that the raw logit outputs of $RNN_{teacher}$ represented true probability distributions before evaluation, we applied Platt scaling. Platt scaling fits a logistic regression over the uncalibrated outputs $z_t$ to produce calibrated probabilities: $P_t = \frac{1}{1 + \exp(-(A z_t + B))}$, where $A$ and $B$ are optimized via maximum likelihood on a hold-out validation set. Model calibration was then scored using the Continuous Ranked Probability Score (CRPS).
+
+$M_{cc}$ continuously projected its cortical state via optimal linear weights $\mathbf{W}_{proj}$ to match the Teacher's latent state $\boldsymbol{\mu}_t^{RNN}$. The distillation loss was formalized as a robust Gaussian likelihood over the residual space:
+\begin{equation}
+	\mathcal{L}_{Distill} = \sum_{t} \left[ -\frac{1}{2}\ln(2\pi\sigma_{res}^2) - \frac{(\boldsymbol{\mu}_t^{RNN} - \mathbf{W}_{proj}\boldsymbol{\mu}_t^{bio})^2}{2\sigma_{res}^2} \right]
+\end{equation}
+where $\sigma_{res}^2$ is the empirically evaluated residual variance.
+
+\subsection{Model comparison}
+
+\subsubsection{Zero-shot out-of-bag generalization}
+To evaluate the NSGA-II optimized $M_{cc}$ architectures against standard heuristics (e.g., Q-Learning, Win-Stay-Lose-Shift), we employed a 5-fold Leave-N-Subjects-Out (LNSO) cross-validation framework. Models were evaluated on entirely held-out human participants. The principal evaluation metric was the Composite Out-of-Bag Negative Log-Likelihood ($NLL_{Comp}$), which explicitly penalizes both incorrect binary choices and inaccurate continuous reaction time predictions:
+\begin{equation}
+	NLL_{Comp} = -\sum_{t=1}^{N_{test}} \ln P(\text{Choice}_t \mid \boldsymbol{\mu}_t) - \sum_{t=1}^{N_{test}} \ln P(RT_t \mid \boldsymbol{\mu}_t)
+\end{equation}
+The significance of the out-of-bag predictive differences was evaluated using a linear mixed-effects model with Validation Fold as a random intercept:
+\begin{equation}
+	NLL_{Comp, f, m} = \beta_0 + \beta_1 \mathrm{Model}_{m} + b_{0f} + \epsilon_{f,m}
+\end{equation}
+where $b_{0f} \sim \mathcal{N}(0, \sigma_f^2)$.
+
+To approximate exact leave-one-out cross-validation without re-fitting the model $N$ times, we computed the Pareto Smoothed Importance Sampling Leave-One-Out (PSIS-LOO) estimator \parencite{vehtari2017practical}. For each model, we estimated the Expected Log Pointwise Predictive Density (ELPD), defined as:
+\begin{equation}
+\text{ELPD}_{\text{LOO}} = \sum_{i=1}^n \ln \int p(y_i \mid \theta) p(\theta \mid y_{-i}) d\theta
+\end{equation}
+which provides a metric for out-of-sample generalization. The reliability of this approximation is diagnosed by the Pareto shape parameter $k$; values $k > 0.7$ indicate that the posterior distribution is too broad, rendering the approximation statistically invalid.
+
+\subsubsection{Trial-by-Trial Online Readout (Delta Rule)}
+To test the hypothesis that $M_{cc}$ maintains an instantaneously separable geometry rather than relying on an offline, retrospective non-causal ordinary least squares (OLS) regression, we evaluated the network's predictive capacity using a biologically plausible online readout. We implemented a single-layer perceptron continuously trained via the online delta rule \parencite{widrow1960adaptive}:
+\begin{equation}
+	\hat{y}_t = \sigma(\mathbf{w}_t^T \boldsymbol{\mu}_t)
+\end{equation}
+\begin{equation}
+	\mathbf{w}_{t+1} = \mathbf{w}_t + \eta_{ro} (\text{Choice}_t - \hat{y}_t) \boldsymbol{\mu}_t
+\end{equation}
+where $\eta_{ro}$ is the readout learning rate. Model predictions were restricted solely to $\hat{y}_t$ derived from the strictly causal weight vector $\mathbf{w}_t$. Performance was tracked using the online Choice Negative Log-Likelihood (NLL), capturing the trial-by-trial predictive error:
+\begin{equation}
+NLL_{online} = -\sum_t \left[ y_t \ln(\hat{y}_t) + (1 - y_t) \ln(1 - \hat{y}_t) \right]
+\end{equation}
+where $y_t$ is the participant's true choice.
+
+\subsubsection{Optimal Bayesian Observer (Latent Variables)}
+To extract the objective cognitive variables (Value, State, and Volatility) used for representational decoding, we simulated the environment using an optimal Bayesian observer. The environment's State ($S_t \in [0,1]$) follows a Gaussian random walk with Volatility ($V_t$):
+\begin{equation}
+S_{t+1} \sim \mathcal{N}(S_t, V_t)
+\end{equation}
+The observer maintains a posterior over $S_t$ and $V_t$, from which we extracted the expected reward (Value), the inferred environmental context (State), and the environmental uncertainty (Volatility) at each trial to use as regression targets.
+
+\subsubsection{State Readout Efficiency}
+To measure the continuous alignment of the $M_{cc}$ space to the objective environmental state ($\mathrm{Bd}_1$), we computed the State Readout Efficiency. This was defined as the cross-validated decoding $R^2$ normalized by the empirical environmental volatility $V$:
+\begin{equation}
+	\text{Efficiency}_{is} = \frac{R^2(\boldsymbol{\mu}_t, \mathrm{Bd}_{1, t})}{V_{is}}
+\end{equation}
+This metric was modeled across ablation conditions using a 3-way linear mixed-effects model (LMM) with crossed random intercepts for Subject and Fold:
+\begin{equation}
+	\text{Efficiency}_{is} = \beta_0 + \beta_1 \mathrm{Ablation}_i + b_{0s} + b_{0f} + \epsilon_{is}
+\end{equation}
+
+\subsubsection{Policy Perseverance and Differential Entropy}
+To quantify task perseverance (behavioral inflexibility) following cerebellar perturbation, we modeled the participant's trial-by-trial policy (Win-Stay/Lose-Shift) using a Bayesian Beta update. Given $w$ Win-Stay events and $l$ Lose-Shift events, the posterior policy distribution follows $X \sim \text{Beta}(\alpha_0 + w, \beta_0 + l)$, where $\alpha_0=\beta_0=1$ represent a uniform prior. The differential entropy $h(X)$ was computed to provide a continuous measure of policy uncertainty (flexibility):
+\begin{equation}
+	h(X) = \ln(\mathrm{B}(\alpha, \beta)) - (\alpha - 1)\psi(\alpha) - (\beta - 1)\psi(\beta) + (\alpha + \beta - 2)\psi(\alpha + \beta)
+\end{equation}
+where $\mathrm{B}$ is the Beta function and $\psi$ is the digamma function. Differences in entropy distributions across structural ablation conditions (0\%, 90\%, 100\%) were tested to evaluate shifts in perseverative behavior.
+
+\subsubsection{Memory Capacity (MC) and Sequential Ablation}
+To directly quantify the non-Markovian fading memory of the cortical state independently of the $RNN_{teacher}$ proxy, we employed the Memory Capacity metric from Reservoir Computing \parencite{jaeger2002}. We trained an L2-regularized Ridge regression readout to decode the temporal history of rewards ($\text{Reward}_{t-k}$) solely from the instantaneous cortical state $\boldsymbol{\mu}_t$. The total capacity is defined as the sum of variance explained across $K=15$ sequential temporal lags:
+\begin{equation}
+	MC = \sum_{k=1}^{15} R^2(\boldsymbol{\mu}_t, \text{Reward}_{t-k})
+\end{equation}
+To determine if a given memory capacity was meaningful above baseline noise, we compared the empirical $MC$ against a null model generated by temporally permuting the reward sequence 1,000 times, computing a chance-level $MC_{null}$.
+
+To isolate the structural dependency of this memory, we performed a 1\% sequential ablation of the thalamic feedback tract ($\beta_{thal}$) from 1.0 (Intact) to 0.0 (Complete Lesion), continuously evaluating $MC$ across $N=50$ participants at every 1\% step. The structural degradation trajectory was tested using a continuous linear mixed-effects model:
+\begin{equation}
+	MC_{is} = \beta_0 + \beta_1 \mathrm{Ablation\_Scaled}_{is} + b_{0s} + \epsilon_{is}
+\end{equation}
+where $b_{0s} \sim \mathcal{N}(0, \sigma_b^2)$ denotes the random intercept for participant $s$.
+
+\subsection{Figures}
+	
+	\clearpage
+	\printbibliography
+
+\end{document}
+
+
+
+

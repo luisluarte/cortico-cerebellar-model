@@ -1,4 +1,6 @@
-%!TeX TXS-program:compile = txs:///pdflatex | txs:///biber | txs:///pdflatex | txs:///pdflatex | txs:///clean
+% !TeX program = pdflatex
+% !BIB program = biber
+% !TeX TXS-program:compile = txs:///pdflatex | txs:///biber | txs:///pdflatex | txs:///pdflatex
 \documentclass{beamer}
 \usepackage[style=apa]{biblatex}
 \usepackage{booktabs}
@@ -8,18 +10,261 @@
 \usepackage{transparent}
 \setbeamertemplate{navigation symbols}{}
 \usefonttheme[onlymath]{serif}
-\addbibresource{bibliography.bib}
+\addbibresource{references.bib}
+\setbeamercolor{block title}{bg=cyan, fg=white}
+\setbeamercolor{block body}{bg=cyan!10}
 
 
-\title{Cortico-Cerebellar model}
+\title{A Cortico-Cerebellar model for non-markovian tasks}
 \author{Luis Luarte}
 \institute{UDD}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric}
+\tikzset{
+    circ/.style = {circle, draw, inner sep=0.5pt, minimum size=10pt, font=\tiny, fill=white},
+    exc/.style = {->, thick, >={Stealth[length=2mm, width=1.5mm]}},
+    inh/.style = {-{Bar[width=2mm, length=1mm]}, thick}
+}
 \begin{document}
 	\frame{\titlepage}
-	\begin{frame}{Cortex hallucination of sensory input}
+	
+	\begin{frame}{What is the actual problem?}
+		\begin{itemize}
+			\item With reversal-learning task lets see if we can derive a value and uncertainty signal
+			\item What, in more general terms, is a reversal-learning task?
+			\item If option A $\rightarrow$ $+0$
+			\item Does the $(\text{Action, Reward})$ tuple at time $t$ provide enough information to determine if $\text{option A} < \text{option B}$
+			\item Agent must know the last $N$ trials to determine $A > B \ | \ A < B$
+			\item Agent wants to determine $(\text{Reward} \ | \ \pi)$, so it must derive $\text{Value}(\pi) \ | \ f(O_{t}, O_{t-1}, \dots, O_{t - N})$, where $O_{t}$ is the observed reward and environment at time $t$
+			\item This gives us a solid frame-work to start with, formally this same problem is partially observable markov decision process (POMDP)
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Reversal-learning is a non-markovian environment for a limited information agent}
+		\begin{itemize}
+			\item We know that in a POMDP there's a state $S_{t}$ which transition to $S_{t+1}$ is markovian, thus depends only on $S_{t}$
+			\item However, we also know that from the perspective of a limited information agent, the environment behaves non-markovian as $O_{t} \rightarrow O_{t+1}$ depends on $S$ which is unknown and presents as a latent state
+			\item Ideal agent needs to derive $S = f(O_{t}, \dots)$, in other words, the agent needs to know if its winter or autumm by checking if its raining or not
+		\end{itemize}
+		
+		\begin{block}{TLDR}
+			\begin{itemize}
+				\item Reversal learning $\rightarrow$ non-markovian
+				\item non-markovian $\rightarrow$ requires temporal integration
+				\item The integration of $S, R, V(\pi)$ $\rightarrow$ Elegibility trace
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}{Solving non-markovian environments}
+		\begin{itemize}
+			\item Resting-state fMRI \parencite{habasDistinctCerebellarContributions2009} $\rightarrow$ whole-brain ICA $\rightarrow$ template matching $\rightarrow$ functional template \parencite{damoiseauxConsistentRestingstateNetworks2006}
+			\item $\uparrow$ Executive control networl (Crus I, II)
+			\item $\uparrow$ Salience network (DCN)
+			\item We could speculate a continous injection of historical states/errors
+			\item More evidence by \cite{bucknerOrganizationHumanCerebellum2011a}, showing association networks $>>$ motor networks
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Optogenetic evidence in non-markovian environments}
+	    \parencite{gaoCorticocerebellarLoopMotor2018a}
+	    \begin{itemize}
+	    	\item Anterior lateral motor cortex (ALM, activity predicting future licking) 
+	    	\item DCN perturbation/lesion $\rightarrow$ $\downarrow$ non-markovian task performance
+	    	\item No changes in response stage
+	    	\item DCN $\rightarrow$ VM-thalamus $\rightarrow$ ALM
+	    	\item Dentate acts as control
+	    \end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Specificity of function in non-markovian environments}
+		\parencite{gaoCorticocerebellarLoopMotor2018a,kalmbachInteractionsPrefrontalCortex2009}
+		    \begin{table}
+			\centering
+			\small
+			\renewcommand{\arraystretch}{1.5} % Adds breathing room between rows
+			\resizebox{\textwidth}{!}{%
+			\begin{tabular}{@{}llcc@{}}
+				\toprule
+				\textbf{Perturbed Region} & \textbf{Pathway Severed} & \textbf{Markovian} & \textbf{Non-Markovian} \\
+				& & \scriptsize{\textit{(Delay / Cue-Guided)}} & \scriptsize{\textit{(Trace / Delayed-Response)}} \\
+				\midrule
+				\textbf{None} & Intact & \textcolor{green!70!black}{\textbf{OK}} & \textcolor{green!70!black}{\textbf{OK}} \\
+				\textbf{\textit{DCN}} & Cb $\rightarrow$ Ctx & \textcolor{red}{\textbf{FAIL}} & \textcolor{red}{\textbf{FAIL}} \\
+				\textbf{mPFC} & Ctx $\rightarrow$ Cb & \textcolor{green!70!black}{\textbf{OK}} & \textcolor{red}{\textbf{FAIL}} \\
+				\textbf{DCN $\rightarrow$ Thal} & Cb $\rightarrow$ Ctx & \textcolor{green!70!black}{\textbf{OK}} & \textcolor{red}{\textbf{FAIL}} \\
+				\bottomrule
+			\end{tabular}%
+		}
+		\end{table}
+	\end{frame}
+	
+	\begin{frame}{Policy perserveration in non-markovian tasks}
+		\parencite{verpeutCerebellarContributionsBrainwide2023} Fig 2B, 2C
+		\begin{itemize}
+			\item Chemogenetic perturbation of cerebellum impairs reversal-learning $\rightarrow$ perseverance
+			\item Mice learn simple markovian pairing during training
+			\item Mice show perserveration despite no reward
+			\item Correct answer over session are almost purely at second try, without decreasing it. Thus, the implement a lose-shift heuristic instead of learning the new rule
+		\end{itemize}
+	\end{frame}
+
+	
+	\begin{frame}{Cerebellum canonical model}
+		\begin{center}
+			\resizebox{0.7\textwidth}{!}{%
+				\begin{tikzpicture}[every node/.style={font=\small\sffamily}]
+					% Central column
+					\node (MF) at (0, 6.5) {MF};
+					\node (GC) at (0, 5) {GC};
+					\node (PK) at (0, 3.5) {PK};
+					\node (DCN) at (0, 2) {DCN};
+					\node (THAL) at (0, 0.5) {THAL};
+					\node (CTX) at (0, -1) {CTX};
+					
+					% Left side
+					\node (IO) at (-3, 3.5) {IO};
+					
+					% Right side
+					\node (GO) at (2.5, 4.5) {GO};
+					\node (BS) at (3, 3.5) {BASKET/STELLATE};
+					
+					% MF -> GC (3 arrows - Diverging)
+					\draw[exc] ([xshift=-2mm]MF.south) -- ([xshift=-5mm]GC.north);
+					\draw[exc] (MF.south) -- (GC.north) node[midway, right, xshift=2mm] {\tikz\node[circ]{1};};
+					\draw[exc] ([xshift=2mm]MF.south) -- ([xshift=5mm]GC.north);
+					
+					% GC -> PK (3 arrows - Converging)
+					\draw[exc] ([xshift=-5mm]GC.south) -- ([xshift=-2mm]PK.north);
+					\draw[exc] (GC.south) -- (PK.north) node[midway, left, xshift=-2mm] {\tikz\node[circ]{3};};
+					\draw[exc] ([xshift=5mm]GC.south) -- ([xshift=2mm]PK.north);
+					\node[circ] (circ5) at ([xshift=6mm, yshift=2mm]PK.north) {5}; 
+					
+					% PK -> DCN (3 inhibitory arrows - Converging)
+					\draw[inh] ([xshift=-6mm]PK.south) -- ([xshift=-2mm]DCN.north);
+					\draw[inh] (PK.south) -- (DCN.north) node[midway, right, xshift=2mm] {\tikz\node[circ]{6};};
+					\draw[inh] ([xshift=6mm]PK.south) -- ([xshift=2mm]DCN.north);
+					
+					% MF -> GO
+					\draw[exc, bend left=15] (MF.east) to (GO.north);
+					% GC -> GO
+					\draw[exc, bend right=15] (GC.east) to (GO.south west);
+					% GO -| GC
+					\draw[inh, bend right=25] (GO.north west) to node[midway, above] {\tikz\node[circ]{2};} (GC.north east);
+					
+					% GC -> Basket
+					\draw[exc, bend left=15] (GC.east) to (BS.north);
+					% Basket -| PK
+					\draw[inh, bend left=15] (BS.west) to (PK.east);
+					
+					% IO -> PK
+					\draw[exc] (IO.east) -- (PK.west) node[midway, above] {\tikz\node[circ]{4};};
+					% DCN -| IO
+					\draw[inh] (DCN.west) .. controls (-1.5, 2) and (-1.5, 3) .. (IO.south east);
+					
+					% MF -> DCN
+					\draw[exc] (MF.west) .. controls (-1.5, 5.5) and (-1.5, 2.5) .. (DCN.north west);
+					
+					% CTX -> IO
+					\draw[exc] (CTX.west) .. controls (-4.5, -1) and (-4.5, 3.5) .. node[midway, left] {\tikz\node[circ]{7};} (IO.west);
+					
+					% CTX -> MF
+					\draw[exc] (CTX.east) .. controls (4.5, -1) and (4.5, 6.5) .. node[midway, right] {\tikz\node[circ]{8};} (MF.east);
+					
+					% Feedforward path
+					\draw[exc] (DCN.south) -- (THAL.north);
+					\draw[exc] (THAL.south) -- (CTX.north);
+				\end{tikzpicture}%
+			}
+		\end{center}
+		
+		\vspace{-2mm}
+		\begin{center}
+			\tiny
+			\renewcommand{\arraystretch}{1.2}
+			\begin{tabular}{@{}p{0.48\textwidth}p{0.48\textwidth}@{}}
+				\tikz\node[circ, scale=0.8]{1}; Spatio-temporal expansion & \tikz\node[circ, scale=0.8]{5}; Long term depression \textit{(Anti-Hebbian plasticity)} \\
+				\tikz\node[circ, scale=0.8]{2}; Sparsity regulation & \tikz\node[circ, scale=0.8]{6}; Inhibitory compression \textit{(Authors didn't think of this!)} \\
+				\tikz\node[circ, scale=0.8]{3}; Eligibility trace \textit{(Buffer state forward)} & \tikz\node[circ, scale=0.8]{7}; Cortical prediction error \\
+				\tikz\node[circ, scale=0.8]{4}; Teaching signal & \tikz\node[circ, scale=0.8]{8}; Efference copy \\
+			\end{tabular}
+		\end{center}
+	\end{frame}
+
+\begin{frame}{The gap in canonical models}
+    \begin{itemize}
+    	\item \textbf{Fading memory.} how does the granule layer buffer historical states across non-markovian temporal (or other) gaps
+    	\item \textbf{Cortico-Cerebellar feedback loop.} canonical models heavily favored a \textit{feedforward} mode in the cerebellum (though as pure motor controller). Largely ignoring or not explicitly modeling the projections from DCN to the CTX via Thal
+    	\item \textbf{Credit assignment.} canonical models relied on instantaneous motor errors. Lacking a mechanism to map a delayed, abstract reward signal back onto a sequence of past hidden states, to overcome cognitive policy perserveration
+    \end{itemize}
+    
+    \vspace{4mm}
+    \begin{block}{The Goal of Our Model}
+        To mathematically formulate and simulate these missing recurrent and temporal dynamics, proving the cerebellum's capacity to resolve non-Markovian environments. Then if we capture a value and uncertainty signal it would be a more 'emergent' less bias finding.
+    \end{block}
+\end{frame}
+	
+	\begin{frame}{Bridging the Gap}
+		\begin{columns}[T]
+			\begin{column}{0.4\textwidth}
+				\vspace{2mm}
+				\begin{center}
+					\resizebox{\textwidth}{!}{%
+						\begin{tikzpicture}[every node/.style={font=\small\sffamily},
+							box/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.8cm, align=center, fill=gray!10},
+							exc/.style={->, thick, >={Stealth[length=2mm, width=1.5mm]}},
+							inh/.style={-{Bar[width=2mm, length=1mm]}, thick},
+							model/.style={->, very thick, green!60!black, >={Stealth[length=2.5mm, width=2mm]}},
+							num/.style={circle, draw=green!60!black, fill=white, inner sep=1pt, minimum size=14pt, font=\footnotesize\bfseries, text=green!60!black}
+							]
+							
+							% Nodes
+							\node[box] (MF) at (0, 7.5) {Pons (MF)};
+							\node[box, fill=blue!10] (GC) at (0, 6) {Granular (GC)\\ \scriptsize{\textit{Fading Memory}}};
+							\node[box] (PK) at (0, 4.5) {Purkinje (PK)};
+							\node[box] (DCN) at (0, 3) {Deep Nuclei (DCN)};
+							\node[box] (THAL) at (0, 1.5) {Thalamus (THAL)};
+							\node[box, fill=orange!10] (CTX) at (0, 0) {Cortex (CTX)};
+							
+							\node[box, fill=red!10] (IO) at (-3.5, 4.5) {Inferior Olive (IO)};
+							
+							% Edges
+							\draw[model] (CTX.east) .. controls (3.5, 0) and (3.5, 7.5) .. node[midway, right] {\tikz\node[num]{1};} (MF.east);
+							
+							\draw[model] (MF) -- (GC);
+							\draw[model] (GC.north east) .. controls (2.5, 6.8) and (2.5, 5.2) .. node[right] {\tikz\node[num]{2};} (GC.south east);
+							
+							\draw[model] (GC) -- (PK);
+							\draw[inh, draw=green!60!black, very thick] (PK) -- (DCN) node[midway, right] {\tikz\node[num]{3};};
+							
+							\draw[exc] (DCN) -- (THAL);
+							\draw[model] (THAL.west) .. controls (-2.5, 1.5) and (-2.5, 0) .. node[midway, left] {\tikz\node[num]{4};} (CTX.west);
+							
+							\draw[model] (CTX.west) .. controls (-5, 0) and (-5, 4.5) .. node[midway, left] {\tikz\node[num]{5};} (IO.west);
+							\draw[model] (IO) -- (PK);
+							
+						\end{tikzpicture}
+					}
+				\end{center}
+			\end{column}
+			
+			\begin{column}{0.65\textwidth}			
+				\begin{enumerate}
+					\small
+					\item \textcolor{green!60!black}{\textbf{State Expansion ($\boldsymbol{\mu}_t$):}} The cortical state is projected to the cerebellum via the mossy fibers.
+					\item \textcolor{green!60!black}{\textbf{The Fading Memory ($G_t$):}} The granular layer is modeled as a recurrent Echo State Network (ESN), generating the temporal eligibility trace to bridge the gap.
+					\item \textcolor{green!60!black}{\textbf{State Compression:}} The Purkinje/DCN bottleneck compresses the high-dimensional historical trace into $\mathbf{D}_t$.
+					\item \textcolor{green!60!black}{\textbf{Thalamic Feedback ($\beta_{thal}$):}} Continuous injection of $\mathbf{D}_t$ back into the cortex, transforming the system from a Markovian actor into a Non-Markovian one.
+					\item \textcolor{green!60!black}{\textbf{Historical Credit Assignment:}} The cortical prediction error $\boldsymbol{\epsilon}_t$ drives anti-Hebbian plasticity at the GC$\rightarrow$PK synapses to update the global policy.
+				\end{enumerate}
+			\end{column}
+		\end{columns}
+	\end{frame}
+	
+		\begin{frame}{Cortex hallucination of sensory input}
 		\begin{equation}
-			\hat{\mathbf{I}} = \mathbf{W}_{gen} \cdot \boldsymbol{\mu}_{t}
+			\hat{\mathbf{I}}_t = \mathbf{W}_{gen} \boldsymbol{\mu}_{t}
 		\end{equation}
 		\begin{itemize}
 			\item $\hat{\mathbf{I}}$, is the $\textit{hallucination}$ of equal dimension to $\mathbf{I}$ $\textit{actual input}$
@@ -30,18 +275,18 @@
 	
 	\begin{frame}{Cortical prediction error}
 		\begin{equation}
-			\epsilon = \Pi \odot (\mathbf{I}_{t} - \hat{\mathbf{I}}_{t})
+			\boldsymbol{\epsilon}_{t} = \Pi \odot (\mathbf{I}_{t} - \hat{\mathbf{I}}_{t})
 		\end{equation}
 		\begin{itemize}
 			\item The cortex makes a $\textit{hallucination}$ which acts as active inference of the world, then the participant makes an actual choice generating the sensory vector $\mathbf{I}_{t}$
 			\item To build $\Pi$ as as the precision weighting, we choose the most simplest one. Static anatomical precision, let $\Pi_{raw, i} = \nicefrac{1}{\sigma(\mathbf{I}_{i})}$ be the raw precision weighting vector for input $i$ with variance $\sigma(\mathbf{I}_{i})$, then we generate $\Pi = \nicefrac{\Pi_{raw}}{\bar{\Pi}_{raw}}$ to be the normalized precision weighting
-			\item Element-wise multiplication means we build prediction error $\epsilon$ as the precision weighted prediction error
+			\item Element-wise multiplication means we build prediction error $\boldsymbol{\epsilon}_t$ as the precision weighted prediction error
 		\end{itemize}
 	\end{frame}
 	
 	\begin{frame}{Propagation of cortical state in to the Cerebellum}
 		\begin{equation}
-			\mathbf{G}_{t} = \mathbf{W}_{ach1} \cdot \boldsymbol{\mu}_{t}
+			\mathbf{G}_{t} = \mathbf{W}_{ach1} \boldsymbol{\mu}_{t}
 		\end{equation}
 		\begin{itemize}
 			\item $\mathbf{G}_{t}$ is the Granule Layer state at time $t$, defined as a Marr-Albus-Ito random sparse projection
@@ -52,7 +297,7 @@
 	\begin{frame}{Cebellum memory or eligibility trace}
 		When the cortex makes a prediction and initiates an action, there is some delay for this feedback to arrive. How do we solve the problem of pairing some particular $\mathbf{G}_{t}$ with a given feedback. We need to leave an $\textit{eligibility trace}$
 		\begin{equation}
-			\mathbf{Z}_{t} = (1 - \beta_{gran}) \cdot \mathbf{Z}_{t-1} + \alpha_{gran} \cdot \mathbf{G}_{t}
+			\mathbf{Z}_{t} = (1 - \beta_{gran}) \mathbf{Z}_{t-1} + \alpha_{gran} \mathbf{G}_{t}
 		\end{equation}
 		\begin{itemize}
 			\item Where $\mathbf{G}_{t}$ is the instantaneous firing of the Granule Layer
@@ -62,13 +307,13 @@
 	\end{frame}
 	
 	\begin{frame}{Cerebellum learning}
-		To learn the Cerebellum projects the 6-Dimensional precision weighted error $\epsilon$ to a single dimension (relating this to the Inferior Olive)
+		To learn the Cerebellum projects the 6-Dimensional precision weighted error $\boldsymbol{\epsilon}_t$ to a single dimension (relating this to the Inferior Olive)
 		\begin{equation}
-			\left|\bar{\epsilon}\right| = \frac{1}{d} \sum_{i=1}^{d} 	\left|\bar{\epsilon_{t,i}}\right|
+			\left| \bar{\epsilon}_{t} \right| = \frac{1}{d} \sum_{i=1}^{d} \left| \boldsymbol{\epsilon}_{t, i} \right|
 		\end{equation}
 		With that scalar error we update the Granule Layer trace in its Purkinje Cell representation via anti-Hebbian learning
 		\begin{equation}
-			W_{purk, t} = W_{purk, t-1} - \kappa (\left|\bar{\epsilon}\right| \cdot \mathbf{Z}_{t})
+			\mathbf{W}_{purk, t} = \mathbf{W}_{purk, t-1} - \kappa ( \left| \bar{\epsilon}_{t} \right| \mathbf{Z}_{t})
 		\end{equation}
 	\end{frame}
 	
@@ -85,17 +330,198 @@
 	
 	\begin{frame}{The loop-back: thalamo-cortical pass}
 		\begin{equation}
-			\mu_{t+1} = \mu_{t} + \alpha_{c} [(\mathbf{W}^{T}_{gen} \cdot \epsilon_{t}) - (\lambda_{c} \cdot ITI_{t} \cdot \mu_{t}) + \beta_{thal} (\mathbf{W}_{thal} \cdot \mathbf{D}_{t})]
+			\boldsymbol{\mu}_{t+1} = \boldsymbol{\mu}_{t} + \alpha_{c} \left[(\mathbf{W}^{T}_{gen} \boldsymbol{\epsilon}_{t}) - (\lambda_{c} \cdot ITI_{t} \cdot \boldsymbol{\mu}_{t}) + \beta_{thal} (\mathbf{W}_{thal} \mathbf{D}_{t})\right]
 		\end{equation}
 		\begin{itemize}
-			\item This is the Cortical trace update, $\mathbf{W}^{T}_{gen} \cdot \epsilon_{t}$ projects the error back into the cortical dimension $6 \rightarrow 32$, and we perform gradient descent over a time-decaying trace $\lambda_{c} \cdot ITI_{t} \cdot \mu_{t}$
+			\item This is the Cortical trace update, $\mathbf{W}^{T}_{gen} \boldsymbol{\epsilon}_{t}$ projects the error back into the cortical dimension $6 \rightarrow 32$, and we perform gradient descent over a time-decaying trace $\lambda_{c} \cdot ITI_{t} \cdot \boldsymbol{\mu}_{t}$
 			\item $\mathbf{W}_{thal}$ is the connectivity from cerebellum to cortex $362 \rightarrow 32$, so $\mathbf{W}_{thal} \cdot \mathbf{D}_{t}$ is the cerebellum-cortex forward pass, which via $\beta_{thal}$ pushes the cortex into the non-linear projection
 			\item Finally, the trace is updated via learning rate $\alpha_{c}$ 
 		\end{itemize}
 	\end{frame}
 	
 	\begin{frame}{Converting a trace into action and reaction-time}
-		s
+		For empirical prediction, $M_{cc}$ utilizes an L2-regularized Ridge regression readout to map the cortical latent state $\boldsymbol{\mu}_t$ onto the observed behavioral variables (binary choice and continuous reaction time):
+		\begin{equation}
+			P(\text{Choice}_t = 1 \mid \boldsymbol{\mu}_t) = \sigma(\mathbf{w}_{\text{choice}}^T \boldsymbol{\mu}_t)
+		\end{equation}
+		\begin{equation}
+			RT_t \sim \mathcal{N}(\mathbf{w}_{\text{rt}}^T \boldsymbol{\mu}_t, \sigma_{\text{rt}}^2)
+		\end{equation}
+		where $\sigma(\cdot)$ denotes the logistic sigmoid function, and $\mathbf{w}_{\text{choice}}$ and $\mathbf{w}_{\text{rt}}$ are the respective optimal linear readout weights.
 	\end{frame}
-	
+
+
+
+
+\begin{frame}{Methods: Teacher-Student Distillation}
+    \begin{itemize}
+        \setlength\itemsep{1.5em}
+        \item \textbf{The Teacher Proxy ($RNN_{teacher}$):} We trained a Gated Recurrent Unit (GRU) to predict both a binary choice policy (BCE) and a continuous reaction time kinematic head (Log-Normal mixture). 
+        \item \textbf{Calibration:} The RNN's raw logits were Platt-scaled to produce true probability distributions, scored via Continuous Ranked Probability Score (CRPS).
+        \item \textbf{The Distillation Loss ($\mathcal{L}_{Distill}$):} $M_{cc}$ continuously projected its cortical state ($\boldsymbol{\mu}_t^{bio}$) to match the Teacher's latent state ($\boldsymbol{\mu}_t^{RNN}$). This was formalized as a robust Gaussian likelihood over the residual space:
+        \begin{equation}
+        \mathcal{L}_{Distill} = \sum_{t} \left[ -\frac{1}{2}\ln(2\pi\sigma_{res}^2) - \frac{(\boldsymbol{\mu}_t^{RNN} - \mathbf{W}_{proj}\boldsymbol{\mu}_t^{bio})^2}{2\sigma_{res}^2} \right]
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: NSGA-II Parameter Discovery}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_nsga2_hv.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: NSGA-II Parameter Discovery (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.2em}
+        \item \textbf{Multi-Objective Front:} We searched the structural space using NSGA-II across a 5D objective space, jointly minimizing distillation loss and empirical behavioral loss, while explicitly penalizing size with an $O(N^{2.5})$ metabolic cost.
+        \item \textbf{Optimal Topology:} Projecting the 5D solutions back to a 4D performance space converged to strict structural limits: $37.5\%$ of Granular capacity ($\approx 336$ cells) and $18.4\%$ of DCN capacity ($\approx 165$ cells).
+        \item \textbf{Hypervolume Decay:} Across the autonomy spectrum ($\gamma \in [0,1]$), $M_{cc}$ degraded significantly slower ($\beta_{log} = -0.494$, $95\%$ CI $[-0.504, -0.482]$) than Q-Learning ($\beta_{log} = -1.279$, $p < .001$) and WSLS ($\beta_{log} = -2.464$, $p < .001$).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: Fading Memory \& Thalamic Ablation}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_memory_capacity.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Fading Memory \& Thalamic Ablation (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.2em}
+        \item \textbf{Non-Markovian Integration:} To verify temporal buffering independent of the Teacher, we evaluated Memory Capacity ($MC$) up to $k=15$ past lags using an L2-Ridge readout on the cortical space.
+        \item \textbf{Intact Capacity:} The baseline $M_{cc}$ maintains significant temporal memory ($Total MC = 0.809$) compared to a temporally permuted null baseline.
+        \item \textbf{Ablation Collapse:} Sequential synthetic ablation of the thalamic tract ($\beta_{thal}$) induced a massive, linear collapse in temporal buffering (Estimate = -1.327, $t(49) = -30.34$, $p < .0001$). At 100\% complete lesion, the network collapsed into a purely instantaneous Markovian reactor (Total MC = 0.065).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Methods: Bayesian Inference \& Generalization (Math \& Intuition)}
+    \begin{itemize}
+        \item \textbf{Adaptive Metropolis-Hastings (MCMC):} To fit the hierarchical behavioral models, we utilized a custom C++ Adaptive Random Walk Metropolis-Hastings algorithm (Haario et al., 2001). \textbf{Intuition:} The sampler iteratively proposes parameter updates using an empirically adapted covariance matrix, dynamically scaling the step size via a Robbins-Monro stochastic approximation to maintain an optimal 23.4\% acceptance rate.
+        \item \textbf{Leave-One-Out Cross Validation:} We evaluated out-of-sample generalization using Pareto-Smoothed Importance Sampling (PSIS-LOO) (Vehtari et al., 2017). 
+        \item \textbf{Expected Log Predictive Density (ELPD):} PSIS-LOO estimates how well the model predicts held-out data. 
+        \begin{equation}
+        \text{ELPD} = \sum_{i=1}^N \log \int p(y_i | \theta) p(\theta | y_{-i}) d\theta
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: Bayesian Factorial Design \& PSIS-LOO}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_psis_loo.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Bayesian Factorial Design \& PSIS-LOO (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.2em}
+        \item \textbf{Zero-Shot Generalization:} Using 10,000 MCMC iterations per subject, we computed out-of-sample ELPD via PSIS-LOO. 
+        \item \textbf{Unconstrained Overfitting:} A flat prior ($\mathcal{N}(0,1)$) yielded an ELPD of 1712.0 but completely failed validation, throwing 389 Pareto $k>0.7$ warnings due to unchecked posterior variance.
+        \item \textbf{Physiological Distillation:} Using the NSGA-II generated guided priors ($\sigma=e^{-0.5}$) completely bounded the geometry (0 warnings, ELPD = 1548.6). This architecture significantly overpowered the WSLS ($\Delta\text{ELPD} = 335.9, p < .001$) and Q-Learning heuristics, proving the loop strictly generalizes behavioral temporal dynamics.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: Directional Flow \& Raw Encoding}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_encoding_ABC.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Methods: Quantifying Flow \& Encoding Capacity (Math \& Intuition)}
+    \begin{itemize}
+        \item \textbf{Granger Causality ($F$):} Does the past temporal sequence of the Cerebellum's state help predict the future of the Cortex's state better than the Cortex's own past alone? Higher $F$-values indicate stronger directional information flow.
+        \item \textbf{Raw Encoding Capacity ($R^2$):} L2-regularized Ridge regression to decode the latent cognitive variable ($y_t$) solely from the region's continuous state vector ($\mathbf{X}_t$).
+        \begin{equation}
+        R^2 = 1 - \frac{\sum (y_t - \mathbf{X}_t \mathbf{w})^2}{\sum (y_t - \bar{y})^2}
+        \end{equation}
+        \item \textbf{Stabilized Readout Efficiency:} We penalized the raw predictive power by the intrinsic temporal volatility (trajectory derivative) of the region's state space:
+        \begin{equation}
+        \text{Efficiency} = \frac{R^2}{\text{Volatility}} = \frac{R^2}{\mathbb{E}[||\mathbf{X}_{t} - \mathbf{X}_{t-1}||^2]}
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: Directional Flow \& Raw Encoding (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.0em}
+        \item \textbf{Directional Flow:} Granger causality revealed significantly higher causal flow from Cerebellum $\rightarrow$ Cortex across Value ($\Delta F=4.70, p=.006$), State ($\Delta F=3.20, p=.012$), and Volatility ($\Delta F=9.70, p<.0001$).
+        \item \textbf{Stabilized Efficiency:} The Cortex demonstrated significantly higher stabilized readout efficiency (Value $\Delta=1.73$, State $\Delta=0.89$, Volatility $\Delta=1.41$, all $p<.0001$), acting as a temporal stabilizer against rapid motor errors.
+        \item \textbf{Raw Encoding Capacity:} However, the Cerebellum matched or exceeded the Cortex in raw, unpenalized encoding capacity for Value ($p=.241$) and Volatility ($p=.768$), and was significantly higher for State ($p<.0001$).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Results: Synthetic Ablations \& Action Encoding (Value)}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_ablation_value.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Synthetic Ablations \& Action Encoding (State)}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_ablation_state.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Synthetic Ablations \& Action Encoding (Volatility)}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_ablation_volatility.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Synthetic Ablations \& Action Encoding (Action)}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_ablation_action.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Synthetic Ablations \& Action Encoding (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.2em}
+        \item \textbf{Cortical Double Dissociation:} Severing thalamic communication ($\text{Lesion}_{Thal}$) significantly degraded Cortical efficiency across all domains (Value $\Delta=-3.13$, State $\Delta=-1.85$, Volatility $\Delta=-2.82$, Action $\Delta=-0.186$, all $p<.01$). Disabling climbing fiber plasticity ($\text{Lesion}_{\kappa}$) produced no statistically significant reduction.
+        \item \textbf{Cerebellar Double Dissociation:} The dependency was inverted. Disabling plasticity ($\text{Lesion}_{\kappa}$) significantly collapsed Cerebellar efficiency (Value $\Delta=-1.49$, State $\Delta=-1.01$, Volatility $\Delta=-1.45$, Action $\Delta=-0.187$, all $p<.0001$). While $\text{Lesion}_{Thal}$ also reduced efficiency, it was significantly less severe than the direct degradation caused by $\text{Lesion}_{\kappa}$ (Value $\Delta=0.675, p<.0001$).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Methods: Quantifying Policy Perseverance (Math \& Intuition)}
+    \begin{itemize}
+        \item \textbf{Heuristic Definition:} We defined a Win-Stay/Lose-Shift policy event. If a participant received a reward and repeated the action, it is a "Win-Stay" ($w$). If they missed and switched, it is a "Lose-Shift" ($l$).
+        \item \textbf{Bayesian Update:} Instead of a static ratio, we modeled their continuous policy state on a trial-by-trial basis using a conjugate Beta posterior:
+        \begin{equation}
+        X \sim \text{Beta}(\alpha_0 + w, \beta_0 + l)
+        \end{equation}
+        where $\alpha_0=\beta_0=1$ acts as a uniform prior.
+        \item \textbf{Differential Entropy ($h(X)$):} We computed the differential entropy of this continuous Beta distribution. \textbf{Intuition:} It measures the "width" or uncertainty of the policy. If the network is trapped in a rigid heuristic (e.g., $100\%$ Win-Stay), the distribution spikes and entropy collapses.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Methods: Quantifying Policy Perseverance (Graphical Example)}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_entropy_explanation.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Policy Perseverance \& Entropy}
+    \begin{center}
+        \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{plots/plot_entropy.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Results: Policy Perseverance \& Entropy (Statistics)}
+    \begin{itemize}
+        \setlength\itemsep{1.0em}
+        \item \textbf{Heuristic Perseverance:} At 90\% partial ablation, differential entropy dropped significantly (Estimate = -0.298, $p = .007$), trapping $M_{cc}$ in a rigid perseverative strategy mimicking clinical symptoms.
+        \item \textbf{Pathological Volatility:} At 100\% complete destruction, the network shattered into a highly volatile stochastic state (Estimate = +1.783, $p < .0001$). 
+        \item \textbf{Trial-by-Trial Online Readout:} Both ablated extremes suffered massive online Choice NLL predictive interference compared to the Intact network (90\% Ablation $t(98) = -7.810, p<.0001$; 100\% Ablation $t(98) = -7.959, p<.0001$).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Discussion}
+    \begin{itemize}
+        \setlength\itemsep{1.5em}
+        \item \textbf{The Core Finding:} The cortico-cerebellar loop is strictly required to buffer historical action trajectories and overcome behavioral perseveration in non-Markovian environments.
+        \item \textbf{A Topological Necessity:} Bayesian estimation confirms that unconstrained recurrent states overfit; tight topological bounds (like the granular expansion and Purkinje compression) are required for reliable, out-of-sample decision making.
+        \item \textbf{Future Directions:} Future models should leverage direct physiological data to inform Bayesian priors, grounding the synthetic hyperparameters ($\alpha_c, \kappa, \beta_{thal}$) directly in in-vivo cerebellar firing rates and temporal dynamics.
+    \end{itemize}
+\end{frame}
+
 \end{document}

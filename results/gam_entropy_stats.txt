@@ -1,0 +1,22 @@
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+Total_Entropy ~ s(Ablation_Pct, k = 5) + s(Subject, bs = "re")
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.107623   0.009203   11.69   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Approximate significance of smooth terms:
+                   edf Ref.df       F p-value    
+s(Ablation_Pct)  3.971  3.999 143.186  <2e-16 ***
+s(Subject)      16.815 49.000   0.522  0.0152 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+R-sq.(adj) =   0.52   Deviance explained = 53.8%
+-REML = -153.14  Scale est. = 0.030597  n = 550

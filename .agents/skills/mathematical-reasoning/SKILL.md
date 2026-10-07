@@ -1,4 +1,4 @@
-﻿---
+---
 name: mathematical-reasoning
 description: Rigorous analytical mathematical reasoning, formal derivations, asymptotic perturbation methods, dynamical systems stability, stochastic calculus, and automated symbolic proof verification.
 ---
@@ -82,14 +82,6 @@ For an Itô diffusion $\mathrm{d}x_t = \mu(x)\mathrm{d}t + \sigma(x)\mathrm{d}W_
 3. The first-passage density is $g(t | x) = -\frac{\partial S(t | x)}{\partial t}$.
 4. In the Laplace domain $\hat{g}(s | x) = \mathbb{E}[e^{-s \tau} | x]$, convert the PDE into an ordinary boundary value problem:
    $$s \hat{g}(s | x) - \mathcal{L}^* \hat{g}(s | x) = 0, \quad \hat{g}(s | a) = 1, \quad \hat{g}(s | 0) = 0$$
-
-### Navarro-Fuss Series Switching Proof
-For standard Wiener diffusion with drift $v$, boundary $a$, and diffusion coefficient $\sigma = 1$:
-* **Large-time expansion** (Fourier spectral series, fast convergence for $t > 2a^2/\pi^2$):
-  $$f_{\text{large}}(t) = \frac{\pi}{a^2} \exp\left( v a w - \frac{v^2 t}{2} \right) \sum_{k=1}^\infty k \sin(k \pi w) \exp\left( -\frac{k^2 \pi^2 t}{2 a^2} \right)$$
-* **Short-time expansion** (Method of images, fast convergence for $t < 2a^2/\pi^2$):
-  $$f_{\text{short}}(t) = \frac{1}{\sqrt{2\pi t^3}} \exp\left( v a w - \frac{v^2 t}{2} \right) \sum_{j=-\infty}^\infty (2j a + a w) \exp\left( -\frac{(2j a + a w)^2}{2 t} \right)$$
-* Switching bound: Choose series to truncate at $k \le K(\epsilon)$ where truncation error $\le \epsilon$.
 
 ---
 

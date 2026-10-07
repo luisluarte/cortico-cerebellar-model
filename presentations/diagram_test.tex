@@ -1,0 +1,101 @@
+﻿\documentclass[aspectratio=43]{beamer}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric}
+
+\tikzset{
+    circ/.style = {circle, draw, inner sep=0.5pt, minimum size=10pt, font=\tiny, fill=white},
+    exc/.style = {->, thick, >={Stealth[length=2mm, width=1.5mm]}},
+    inh/.style = {-{Bar[width=2mm, length=1mm]}, thick}
+}
+
+\begin{document}
+\begin{frame}{Cortico-Cerebellar Microcircuit}
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[every node/.style={font=\small\sffamily}]
+% Central column
+\node (MF) at (0, 5) {MF};
+\node (GC) at (0, 4) {GC};
+\node (PK) at (0, 2.5) {PK};
+\node (DCN) at (0, 1) {DCN};
+\node (THAL) at (0, 0) {THAL};
+\node (CTX) at (0, -1.5) {CTX};
+
+% Left side
+\node (IO) at (-2.5, 2.5) {IO};
+
+% Right side
+\node (GO) at (2, 3.5) {GO};
+\node (BS) at (2.5, 2.5) {BASKET/STELLATE};
+
+% MF -> GC (3 arrows)
+\draw[exc] ([xshift=-2mm]MF.south) -- ([xshift=-5mm]GC.north);
+\draw[exc] (MF.south) -- (GC.north) node[midway, right, xshift=2mm] {\tikz\node[circ]{1};};
+\draw[exc] ([xshift=2mm]MF.south) -- ([xshift=5mm]GC.north);
+
+% GC -> PK (3 arrows)
+\draw[exc] ([xshift=-5mm]GC.south) -- ([xshift=-2mm]PK.north);
+\draw[exc] (GC.south) -- (PK.north) node[midway, left, xshift=-2mm] {\tikz\node[circ]{3};};
+\draw[exc] ([xshift=5mm]GC.south) -- ([xshift=2mm]PK.north);
+\node[circ] (circ5) at ([xshift=5mm, yshift=2mm]PK.north) {5}; 
+
+% PK -> DCN (3 inhibitory arrows)
+\draw[inh] ([xshift=-2mm]PK.south) -- ([xshift=-4mm]DCN.north);
+\draw[inh] (PK.south) -- (DCN.north) node[midway, right, xshift=2mm] {\tikz\node[circ]{6};};
+\draw[inh] ([xshift=2mm]PK.south) -- ([xshift=4mm]DCN.north);
+
+% MF -> GO
+\draw[exc, bend left=15] (MF.east) to (GO.north);
+% GC -> GO
+\draw[exc, bend right=15] (GC.east) to (GO.south west);
+% GO -| GC
+\draw[inh, bend right=30] (GO.north west) to node[midway, above] {\tikz\node[circ]{2};} (GC.north east);
+
+% GC -> Basket
+\draw[exc, bend left=15] (GC.east) to (BS.north);
+% Basket -| PK
+\draw[inh, bend left=15] (BS.west) to (PK.east);
+
+% IO -> PK
+\draw[exc] (IO.east) -- (PK.west) node[midway, above] {\tikz\node[circ]{4};};
+% DCN -| IO
+\draw[inh] (DCN.west) .. controls (-1.5, 1) and (-1.5, 2) .. (IO.south east);
+
+% MF -> DCN
+\draw[exc] (MF.west) .. controls (-2.5, 4.5) and (-2.5, 1.5) .. (DCN.north west);
+
+% CTX -> IO
+\draw[exc] (CTX.west) .. controls (-4.5, -1) and (-4.5, 2.5) .. node[midway, left] {\tikz\node[circ]{7};} (IO.west);
+
+% CTX -> MF
+\draw[exc] (CTX.east) .. controls (4, -1) and (4, 5) .. node[midway, right] {\tikz\node[circ]{8};} (MF.east);
+
+% Feedforward path
+\draw[exc] (DCN.south) -- (THAL.north);
+\draw[exc] (THAL.south) -- (CTX.north);
+\end{tikzpicture}%
+}
+\end{column}
+\begin{column}{0.55\textwidth}
+\scriptsize
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}ll@{}}
+\tikz\node[circ, scale=0.8]{1}; & SPATIO-TEMPORAL EXPANSION \\
+\tikz\node[circ, scale=0.8]{2}; & SPARSITY REGULATION \\
+\tikz\node[circ, scale=0.8]{3}; & ELIGIBILITY TRACE \\
+& \textit{(BUFFER THE STATE FORWARD)} \\
+\tikz\node[circ, scale=0.8]{4}; & TEACHING SIGNAL \\
+\tikz\node[circ, scale=0.8]{5}; & LONG TERM DEPRESSION \\
+& \textit{(ANTI-HEBBIAN PLASTICITY)} \\
+\tikz\node[circ, scale=0.8]{6}; & INHIBITORY COMPRESSION \\
+& \textit{(AUTHORS DID NOT THINK OF THIS!)} \\
+& \textit{(THEY THOUGHT AS A RELAY)} \\
+\tikz\node[circ, scale=0.8]{7}; & CORTICAL PREDICTION ERROR \\
+\tikz\node[circ, scale=0.8]{8}; & EFFERENCE COPY \\
+\end{tabular}
+\end{column}
+\end{columns}
+\end{frame}
+\end{document}

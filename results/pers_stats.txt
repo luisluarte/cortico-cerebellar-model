@@ -1,0 +1,7 @@
+                       Estimate Std. Error       df   t value    Pr(>|t|)
+(Intercept)           0.9885968 0.02040837 97.78576  48.44076 3.69925e-70
+ConditionLesion_Thal -0.3234305 0.02817822 49.00000 -11.47803 1.70548e-15
+ contrast             estimate     SE df t.ratio p.value
+ Intact - Lesion_Thal    0.323 0.0282 49  11.478 <0.0001
+
+Degrees-of-freedom method: kenward-roger 
