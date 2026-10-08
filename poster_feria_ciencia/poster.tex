@@ -1,0 +1,240 @@
+\documentclass[final]{beamer}
+
+% Poster sizing: 78cm x 120cm, portrait
+\usepackage[orientation=portrait,size=custom,width=78,height=120,scale=1.1]{beamerposter}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{qrcode}
+\usepackage{nicefrac}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds, calc}
+
+% ------------------------------------------------
+% Math-like Black & White Theme Configuration
+% ------------------------------------------------
+\usefonttheme{serif} % Classic LaTeX math font
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{headline}{bg=white,fg=black}
+\setbeamercolor{block title}{bg=white,fg=black}
+\setbeamercolor{block body}{bg=white,fg=black}
+\setbeamercolor{item}{fg=black}
+
+\setbeamerfont{block title}{series=\bfseries,size=\large}
+\setbeamerfont{headline}{series=\bfseries}
+
+% Headline Template
+\setbeamertemplate{headline}{
+  \vspace*{0.5cm}
+  
+  \begin{columns}[c]
+    \begin{column}{.2\textwidth}
+      \raggedright
+      \includegraphics[width=0.9\linewidth]{logos/logo_udd.png}
+    \end{column}
+    \begin{column}{.6\textwidth}
+      \centering
+      {\huge \textbf{\inserttitle} \\[1.5ex]}
+      {\large \insertauthor \\[1ex]}
+      {\normalsize \insertinstitute}
+    \end{column}
+    \begin{column}{.2\textwidth}
+      \raggedleft
+      \includegraphics[width=0.9\linewidth]{logos/logo_cics.png}
+    \end{column}
+  \end{columns}
+  
+  \begin{center}
+    \rule{0.95\textwidth}{3pt}
+  \end{center}
+  \vspace{0.2cm}
+}
+
+% Block Template (Minimalist Math Style)
+\setbeamertemplate{block begin}{
+  \vspace{0.5ex}
+  \begin{center}
+    {\usebeamerfont{block title}\insertblocktitle} \\
+    \vspace{0ex}
+    \rule{0.9\linewidth}{1.5pt}
+  \end{center}
+  \vspace{1ex}
+  \begin{flushleft}
+  \large
+}
+\setbeamertemplate{block end}{
+  \end{flushleft}
+  \vspace{1.5ex}
+}
+
+% ------------------------------------------------
+% Document Info
+% ------------------------------------------------
+\title{A Cortico-Cerebellar Model for Solving Non-Markovian Environments}
+\author{Luis Luarte\inst{1}, \textbf{\textit{Principal Investigator}}\inst{2} (ORCID: 0000-0000-0000-0000)}
+\institute{\inst{1} Centro de Investigación en Complejidad Social (CICS), Universidad del Desarrollo, Santiago, Chile \and \inst{2} Department, Center, City, Country}
+
+\begin{document}
+\begin{frame}[fragile,t]
+  \begin{columns}[T]
+    % LEFT COLUMN
+    \begin{column}{.45\textwidth}
+      
+      \begin{block}{Introduction}
+        $\vdash$ Cerebellar lesions spare delay conditioning but abolish trace conditioning, revealing a failure to bridge temporal gaps. \\
+        \vspace{0.2em}
+        $\vdash$ Navigating these non-Markovian gaps requires delayed credit assignment, yet canonical models treat the cerebellum as purely feedforward. \\
+        \vspace{0.2em}
+        $\vdash$ Feedforward architectures trap the cortex in a Markovian regime restricted to instantaneous observations. \\
+        
+        
+        \textbf{Hypothesis.} Passing cortical states through a granular expansion, followed by sparse compression and thalamic return, provides the necessary temporal integration to resolve non-Markovian delays without backpropagation-through-time.
+      \end{block}
+
+      \begin{block}{Methods}
+        \begin{center}
+        \begin{tikzpicture}[
+            >=stealth,
+            node distance=1.2cm and 10cm,
+            font=\small,
+            box/.style={rectangle, draw=black!80, thick, rounded corners=3pt, minimum width=3.5cm, minimum height=1.2cm, align=center},
+            module/.style={rectangle, draw=none, fill=gray!10, rounded corners=5pt, inner sep=15pt},
+            arrow/.style={->, thick, draw=black!80},
+            dasharrow/.style={->, dashed, thick, draw=black!80},
+        ]
+
+        % Cortex
+        \node[box] (mu) {$\boldsymbol{\mu}_t^{(1)}$ \\ Cortical State};
+        \node[box, below=1.5cm of mu] (error) {$\boldsymbol{\epsilon}_t^{(2)}$ \\ Prediction Error};
+        \node[box, below=2cm of error] (mu_next) {$\boldsymbol{\mu}_{t+1}^{(1)}$ \\ State Update};
+
+        % Cerebellum
+        \node[box, right=10cm of mu] (gran) {$\mathbf{G}_t^{(3)}$ \\ Granular Layer};
+        \node[box, below=1cm of gran] (trace) {$\mathbf{Z}_t^{(4)}$ \\ Eligibility Trace};
+        \node[box, below=1cm of trace] (purk) {$\mathbf{W}_{purk,t}^{(5)}$ \\ Purkinje Weights};
+        \node[box, below=1cm of purk] (dcn) {$\mathbf{D}_t^{(6)}$ \\ DCN Compression};
+
+        % Backgrounds
+        \begin{scope}[on background layer]
+            \node[module, fit=(mu) (error) (mu_next), label={[font=\bfseries]90:Cortex}] (ctx_bg) {};
+            \node[module, fit=(gran) (trace) (purk) (dcn), label={[font=\bfseries]90:Cerebellum}] (cer_bg) {};
+        \end{scope}
+
+        % Forward to Cerebellum
+        \draw[arrow] (mu) -- node[above] {$\mathbf{W}_{ach1}^{(7)}$} (gran);
+
+        % Cerebellum internal
+        \draw[arrow] (gran) -- node[right] {$\alpha_{gran}$} (trace);
+        \draw[arrow] (trace) -- (purk);
+        \draw[arrow] (purk) -- (dcn);
+        \draw[arrow] (gran.east) -- +(1.5,0) |- node[pos=0.25, right] {$\mathbf{W}_{ach2}^{(7)}$} (dcn.east);
+
+        % Error to Purkinje
+        \draw[dasharrow] (error.east) -- +(2.0,0) |- node[pos=0.75, above] {Climbing Fiber $|\bar{\epsilon}_t|$} (purk.west);
+
+        % Cortex internal
+        \draw[arrow] (mu) -- (error);
+        \draw[arrow] (error) -- node[right] {$\mathbf{W}_{gen}^T$} (mu_next);
+        \draw[arrow] (mu.west) -- +(-1.5,0) |- node[pos=0.25, left] {Leak $\lambda_c$} (mu_next.west);
+
+        % Thalamus return
+        \draw[arrow] (dcn) -- node[pos=0.5, above, sloped] {$\beta_{thal}\mathbf{W}_{thal}$ (Thalamus)} (mu_next);
+
+        \end{tikzpicture}
+
+        \vspace{0.5cm}
+        \begin{minipage}{\linewidth}
+        \small
+        \textbf{(1)} $\boldsymbol{\mu}_{t+1} = \boldsymbol{\mu}_{t} + \alpha_{c} \left[\mathbf{W}^{T}_{gen} \boldsymbol{\epsilon}_{t} - \lambda_{c} ITI_{t} \boldsymbol{\mu}_{t} + \beta_{thal} \mathbf{W}_{thal} \mathbf{D}_{t}\right]$ \\[0.5ex]
+        \textbf{(2)} $\boldsymbol{\epsilon}_{t} = \Pi \odot (\mathbf{I}_{t} - \hat{\mathbf{I}}_{t})$ \\[0.5ex]
+        \textbf{(3)} $\mathbf{G}_{t} = \mathbf{W}_{ach1} \boldsymbol{\mu}_{t}$ \\[0.5ex]
+        \textbf{(4)} $\mathbf{Z}_{t} = (1 - \beta_{gran}) \mathbf{Z}_{t-1} + \alpha_{gran} \mathbf{G}_{t}$ \\[0.5ex]
+        \textbf{(5)} $\mathbf{W}_{purk, t} = \mathbf{W}_{purk, t-1} - \kappa ( \left| \bar{\epsilon}_{t} \right| \mathbf{Z}_{t})$ \\[0.5ex]
+        \textbf{(6)} $\mathbf{D}_{t} = \mathbf{W}_{ach2} (\mathbf{G}_{t} \odot \mathbf{W}_{purk, t})$ \\[0.5ex]
+        \textbf{(7)} $\mathbf{W}_{ach1}, \mathbf{W}_{ach2} \sim \mathcal{N}(0, \sigma_{ach}^2)$
+        \end{minipage}
+
+        \vspace{0.5cm}
+        \begin{tikzpicture}[
+            >=stealth,
+            node distance=0.4cm,
+            font=\small,
+            box/.style={rectangle, draw=black!80, thick, rounded corners=3pt, minimum width=8cm, minimum height=1cm, align=center, fill=gray!10},
+            arrow/.style={->, thick, draw=black!80}
+        ]
+        
+        \node[box] (data) {\textbf{1. Behavioral Data} \\ $N=128$ Reversal Learning Task};
+        \node[box, below=of data] (nsga) {\textbf{2. NSGA-II Discovery} \\ Population-Level Priors};
+        \node[box, below=of nsga] (bayes) {\textbf{3. Bayesian Fitting} \\ Individual Phenotypes (HMC)};
+        \node[box, below=of bayes] (ablation) {\textbf{4. Structural Ablations} \\ Thalamic \& Plasticity Lesions};
+        \node[box, below=of ablation] (rep) {\textbf{5. Representation Studies} \\ Latent State Readout Efficiency};
+        
+        \draw[arrow] (data) -- (nsga);
+        \draw[arrow] (nsga) -- (bayes);
+        \draw[arrow] (bayes) -- (ablation);
+        \draw[arrow] (ablation) -- (rep);
+        
+        \end{tikzpicture}
+        \end{center}
+      \end{block}
+
+      \begin{block}{Results}
+        \begin{figure}
+            \begin{flushleft}
+            \textbf{Experimental Pipeline:} Behavioral data from $N=128$ participants performing a reversal learning task were considered. First, we employed NSGA-II multi-objective optimization to derive population-level structural priors. These priors constrained a hierarchical Bayesian model (HMC) to fit individual physiological phenotypes. Using these individualized models, we computed selective network ablations to observe behavioral perseverance (entropy collapse) and assessed the readout capabilities of the model's latent geometric representations.
+            \end{flushleft}
+        \end{figure}
+        \vspace{0.1cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_nsga2_hv_ggdist.png}
+            \caption{\textbf{NSGA-II Discovery and Performance Decay.} The biological architecture ($M_{cc}$) operates autonomously across the Pareto front. It demonstrates superior or equivalent performance to standard heuristic architectures (Q-learning and WSLS). The left panel shows the 4D Hypervolume ($\mu$) decay with 95\% bootstrapped confidence intervals across the autonomy spectrum ($\gamma$). The right panel illustrates the statistical difference ($\Delta\mu = M_{cc} - \text{Heuristic}$) across $\gamma$, demonstrating where the biological constraints provide a significant performance advantage (differences above 0).}
+        \end{figure}
+        \vspace{0.1cm}
+      \end{block}
+
+    \end{column}
+    
+    % RIGHT COLUMN
+    \begin{column}{.45\textwidth}
+
+      \begin{block}{Results (cont.)}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_psis_loo_ggdist.png}
+            \caption{\textbf{Zero-Shot Transfer and Out-of-Sample Generalization.} The constrained continuous dynamics generalize out-of-sample behavior. A strict Bayesian model comparison reveals that the Guided Biological model significantly outperforms the top-performing heuristic (WSLS) with a relative $\Delta\text{ELPD}$ of 335.9 ($SE = 2.4$, $p < .001$). The strict zero-shot transfer configuration also maintained a significant advantage over WSLS ($\Delta\text{ELPD} = 298.7$, $SE = 2.2$, $p < .001$). While the Unconstrained baseline achieved high nominal ELPD, it catastrophically failed validation (389 Pareto $k > 0.7$ warnings), demonstrating the necessity of the structural priors.}
+        \end{figure}
+        \vspace{0.1cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.6\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_guided_wsls_mock.png}
+            \caption{\textbf{Predictive Accuracy.} The Guided Bayesian model significantly outperforms the WSLS heuristic in both trial-by-trial Decision loss ($p < .001$) and Kinematic RT RMSE ($p < .001$).}
+        \end{figure}
+        \vspace{0.1cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.6\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_entropy_ggdist.png}
+            \caption{\textbf{Behavioral Rigidity.} Ablating the cortico-cerebellar loop reveals increasing perseveration and a collapse in policy entropy. Repeated measures confirm a significant reduction in entropy between 0\% and 90\% ablation ($p < .01$) and a catastrophic collapse at 100\% ablation ($p < .001$).}
+        \end{figure}
+        \vspace{0.1cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_ablation_grid.png}
+            \caption{\textbf{Representational Collapse.} Assessing the capacity of the model's latent states reveals catastrophic predictive failure when the cerebellar loop is completely severed.}
+        \end{figure}
+        \vspace{0.1cm}
+      \end{block}
+
+      \begin{block}{Conclusion}
+        $\vdash$ Fading memory and cortico-thalamic feedback loops are sufficient to resolve non-Markovian environments. \\
+        \vspace{0.2em}
+        $\vdash$ Teacher-Student distillation via NSGA-II successfully isolates chaotic physiological ODE parameters without breaking auto-differentiation chains. \\
+        \vspace{0.2em}
+        $\vdash$ This framework successfully captures emergent value and uncertainty signals purely through historical tracking.
+      \end{block}
+
+
+    \end{column}
+  \end{columns}
+\end{frame}
+\end{document}

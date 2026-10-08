@@ -1,4 +1,4 @@
-﻿import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -17,7 +17,7 @@ plt.rcParams.update({
     "axes.spines.right": False,
     "lines.linewidth": 2.5,
     "figure.dpi": 300,
-    "figure.figsize": (8, 6)
+    "figure.figsize": (12, 5)
 })
 
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']

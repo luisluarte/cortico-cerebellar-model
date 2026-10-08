@@ -1,0 +1,177 @@
+\documentclass[final]{beamer}
+
+% Poster sizing: 78cm x 120cm, portrait
+\usepackage[orientation=portrait,size=custom,width=78,height=120,scale=1.1]{beamerposter}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{qrcode}
+\usepackage{nicefrac}
+
+% ------------------------------------------------
+% Math-like Black & White Theme Configuration
+% ------------------------------------------------
+\usefonttheme{serif} % Classic LaTeX math font
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{headline}{bg=white,fg=black}
+\setbeamercolor{block title}{bg=white,fg=black}
+\setbeamercolor{block body}{bg=white,fg=black}
+\setbeamercolor{item}{fg=black}
+
+\setbeamerfont{block title}{series=\bfseries,size=\large}
+\setbeamerfont{headline}{series=\bfseries}
+
+% Headline Template
+\setbeamertemplate{headline}{
+  
+  \begin{columns}[c]
+    \begin{column}{.2\textwidth}
+      \raggedright
+      \includegraphics[width=0.9\linewidth]{logos/logo_udd.png}
+    \end{column}
+    \begin{column}{.6\textwidth}
+      \centering
+      {\huge \textbf{\inserttitle} \\[1.5ex]}
+      {\large \insertauthor \\[1ex]}
+      {\normalsize \insertinstitute}
+    \end{column}
+    \begin{column}{.2\textwidth}
+      \raggedleft
+      \includegraphics[width=0.9\linewidth]{logos/logo_cics.png}
+    \end{column}
+  \end{columns}
+  
+  \begin{center}
+    \rule{0.95\textwidth}{3pt}
+  \end{center}
+  \vspace{0.2cm}
+}
+
+% Block Template (Minimalist Math Style)
+\setbeamertemplate{block begin}{
+  \vspace{1ex}
+  \begin{center}
+    {\usebeamerfont{block title}\MakeUppercase{\insertblocktitle}} \\
+    \vspace{0.3ex}
+    \rule{0.9\linewidth}{1.5pt}
+  \end{center}
+  \vspace{1ex}
+  \begin{flushleft}
+  \large
+}
+\setbeamertemplate{block end}{
+  \end{flushleft}
+  \vspace{1.5ex}
+}
+
+% ------------------------------------------------
+% Document Info
+% ------------------------------------------------
+\title{A Cortico-Cerebellar Model for Solving Non-Markovian Environments}
+\author{Luis Luarte\inst{1}, \textbf{\textit{Principal Investigator}}\inst{2} (ORCID: 0000-0000-0000-0000)}
+\institute{\inst{1} Centro de Investigación en Complejidad Social (CICS), Universidad del Desarrollo, Santiago, Chile \and \inst{2} Department, Center, City, Country}
+
+\begin{document}
+\begin{frame}[fragile,t]
+  \begin{columns}[T]
+    % LEFT COLUMN
+    \begin{column}{.45\textwidth}
+      
+      \begin{block}{Introduction}
+        $\vdash$ Cerebellar lesions spare delay conditioning but abolish trace conditioning, revealing a failure to bridge temporal gaps. \\
+        \vspace{0.2em}
+        $\vdash$ Navigating these non-Markovian gaps requires delayed credit assignment, yet canonical models treat the cerebellum as purely feedforward. \\
+        \vspace{0.2em}
+        $\vdash$ Feedforward architectures trap the cortex in a Markovian regime restricted to instantaneous observations. \\
+        
+        
+        \textbf{Hypothesis.} Passing cortical states through a granular expansion, followed by sparse compression and thalamic return, provides the necessary temporal integration to resolve non-Markovian delays without backpropagation-through-time.
+      \end{block}
+
+      \begin{block}{Results}
+        
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_nsga2_hv.png}
+            \caption{\textbf{NSGA-II Discovery.} Multi-objective evolution jointly minimized distillation and empirical loss to converge on structural bounds.}
+        \end{figure}
+        \vspace{0.5cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_psis_loo.png}
+            \caption{\textbf{Zero-Shot Transfer.} The distilled physiological model predicts raw behavior significantly better than natively optimized heuristics.}
+        \end{figure}
+        \vspace{0.5cm}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_memory_capacity.png}
+            \caption{\textbf{Temporal Integration.} The baseline $M_{cc}$ maintains temporal memory, while complete thalamic ablation collapses into a Markovian reactor.}
+        \end{figure}
+      \end{block}
+
+    \end{column}
+    
+    % RIGHT COLUMN
+    \begin{column}{.45\textwidth}
+
+      \begin{block}{Results (cont.)}
+        
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.95\linewidth,keepaspectratio]{../cortico-cerebellar-model/presentations/plots/plot_encoding_ABC.png}
+            \caption{\textbf{Directional Flow.} Granger causality reveals significant causal flow from Cerebellum to Cortex across Value, State, and Volatility.}
+        \end{figure}
+      \end{block}
+
+
+
+      \begin{block}{Methods}
+        \textbf{State Expansion \& Fading Memory.} The granular layer acts as an Echo State Network to generate an eligibility trace.
+        \begin{equation}
+          \phi(X_t) = W_{\text{exp}} X_t
+        \end{equation}
+        Where $X_t$ is the cortical state, $W_{\text{exp}}$ is the fixed immersion matrix, and $\phi(X_t)$ is the expanded trace.
+        
+        
+        \textbf{Sparse Compression.} The DCN compresses the trace without geometric collapse.
+        \begin{equation}
+          C_t = P_\theta(\phi(X_t))
+        \end{equation}
+        Where $P_\theta$ is a sparse Achlioptas projection preventing signal cross-talk, and $C_t$ is the compressed historical state returned via the thalamus.
+
+        
+        \textbf{Teacher-Student Distillation.} The ODE is evolved via NSGA-II.
+        \begin{equation}
+          \mathcal{J}(m) = \mathbb{E}_{\text{Data}} [\log p(\text{RT}, A \mid m)] - \beta \cdot I(\phi(X_t); C_t)
+        \end{equation}
+        Where $\mathcal{J}(m)$ optimizes behavioral fit while penalizing mutual information to enforce sparsity.
+      \end{block}
+
+      \begin{block}{Conclusion}
+        $\vdash$ Fading memory and cortico-thalamic feedback loops are sufficient to resolve non-Markovian environments. \\
+        \vspace{0.2em}
+        $\vdash$ Teacher-Student distillation via NSGA-II successfully isolates chaotic physiological ODE parameters without breaking auto-differentiation chains. \\
+        \vspace{0.2em}
+        $\vdash$ This framework successfully captures emergent value and uncertainty signals purely through historical tracking.
+      \end{block}
+      
+      \begin{block}{Acknowledgements \& Bibliography}
+        \begin{columns}[T]
+          \begin{column}{0.6\textwidth}
+            \textbf{Acknowledgements.}\\
+            We thank the contributors and funding agencies for their ongoing support of computational neuroscience research at UDD.
+          \end{column}
+          \begin{column}{0.3\textwidth}
+            \centering
+            % Bibliography QR Code
+            \qrcode[height=5cm]{https://github.com/luisluarte/cortico-cerebellar-model} \\
+            \vspace{1ex}
+            \normalsize Scan for References
+          \end{column}
+        \end{columns}
+      \end{block}
+
+    \end{column}
+  \end{columns}
+\end{frame}
+\end{document}
